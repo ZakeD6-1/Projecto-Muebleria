@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Alta de Producto</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style/style.css">
+</head>
+<body>
+
+    <header>
+        <h1>Muebleria</h1>
+        <nav>
+            <ul>
+                <li><a href="alta-producto.html">Alta Producto</a></li>
+                <li><a href="index.html">Catálogo</a></li>
+                <li><a href="index.html#contacto">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+
+    <h1>Alta de Producto</h1>
+
+    <form action="#" method="POST" enctype="multipart/form-data">
+
+        <!-- Nombre -->
+        <div>
+            <label for="nombre">Nombre del producto</label><br>
+            <input type="text" id="nombre" name="nombre" required>
+        </div>
+
+        <br>
+
+        <!-- Descripción -->
+        <div>
+            <label for="descripcion">Descripción</label><br>
+            <textarea id="descripcion" name="descripcion" rows="4" required></textarea>
+        </div>
+
+        <br>
+
+        <!-- Precio -->
+        <div>
+            <label for="precio">Precio</label><br>
+            <input type="number" id="precio" name="precio" step="0.01" required>
+        </div>
+
+        <br>
+
+        <!-- Stock -->
+        <div>
+            <label for="stock">Stock</label><br>
+            <input type="number" id="stock" name="stock" required>
+        </div>
+
+        <br>
+
+        <!-- Categoría -->
+        <div>
+            <label for="categoria">Categoría</label><br>
+            <select id="categoria" name="categoria" required>
+                <option value="">Seleccione una categoría</option>
+                <option value="mesas">Mesas</option>
+                <option value="sillas">Sillas</option>
+                <option value="camas">Camas</option>
+                <option value="sommiers">Sommiers</option>
+            </select>
+        </div>
+
+        <br>
+
+        <!-- Marca -->
+        <div>
+            <label for="marca">Marca</label><br>
+            <input type="text" id="marca" name="marca">
+        </div>
+
+        <br>
+
+        <!-- SKU -->
+        <div>
+            <label for="sku">SKU</label><br>
+            <input type="text" id="sku" name="sku">
+        </div>
+
+        <br>
+
+        <!-- Imagen -->
+        <div>
+            <label for="imagen">Imagen del producto</label><br>
+            <input type="file" id="imagen" name="imagen" accept="image/*" required>
+        </div>
+
+        <br>
+
+        <!-- Stock -->
+        <div>
+            <label>Stock</label><br>
+            <input type="radio" id="En Stock" name="Stock" value="En Stock" checked>
+            <label for="En Stock">Disponible</label>
+
+            <input type="radio" id="Sin Stock" name="Stock" value="Sin Stock">
+            <label for="Sin Stock">Agotado</label>
+        </div>
+
+        <br>
+
+        <!-- Destacado -->
+        <div>
+            <input type="checkbox" id="destacado" name="destacado">
+            <label for="destacado">Producto destacado</label>
+        </div>
+
+        <br>
+
+        <!-- Botones -->
+        <div>
+            <button type="submit">Guardar producto</button>
+            <button type="reset">Limpiar</button>
+        </div>
+
+    </form>
+
+    </main>
+
+</body>
+</html>
