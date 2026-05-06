@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo - Muebleria</title>
+    <link rel="stylesheet" href="style/style.css">
+</head>
+<body>
+
+    <header>
+        <h1>Muebleria</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="catalogo.html">Catálogo</a></li>
+                <li><a href="alta-producto.html">Alta Producto</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+
+        <section id="catalogo-filtros">
+            <h2>Filtros</h2>
+            <div id="filtros-container"></div>
+
+            <div id="tags-activas-container" style="display:none;">
+                <h3>Filtros activos</h3>
+                <div id="tags-activas"></div>
+            </div>
+        </section>
+
+        <section id="productos-catalogo">
+            <h2>Productos</h2>
+            <div id="productos-grid" class="productos-grid"></div>
+        </section>
+
+    </main>
+
+    <footer id="contacto">
+        <p>&copy; 2026 Muebleria</p>
+    </footer>
+
+    <script>
+        const categorias = [
+            {
+                id: "mesas",
+                nombre: "Mesas",
+                tags: [
+                    { id: "mesa-madera", nombre: "Madera" },
+                    { id: "mesa-metal", nombre: "Metal" },
+                    { id: "mesa-vidrio", nombre: "Vidrio" }
+                ]
+            },
+            {
+                id: "sillas",
+                nombre: "Sillas",
+                tags: [
+                    { id: "silla-madera", nombre: "Madera" },
+                    { id: "silla-metal", nombre: "Metal" }
+                ]
+            },
+            {
+                id: "camas",
+                nombre: "Camas",
+                tags: [
+                    { id: "cama-madera", nombre: "Madera" },
+                    { id: "cama-metal", nombre: "Metal" }
+                ]
+            },
+            {
+                id: "sommiers",
+                nombre: "Sommiers",
+                tags: [
+                    { id: "sommier-2plazas", nombre: "2 Plazas" },
+                    { id: "sommier-king", nombre: "King Size" }
+                ]
+            }
+        ];
+
+        const productos = [
+            { id: 1, nombre: "Mesa de Madera", categoria: "mesa-madera", precio: "$150.000", img: "https://via.placeholder.com/300x200", desc: "Mesa resistente ideal para comedor." },
+            { id: 2, nombre: "Mesa de Metal", categoria: "mesa-metal", precio: "$180.000", img: "https://via.placeholder.com/300x200", desc: "Diseño moderno y duradero." },
+            { id: 3, nombre: "Mesa de Vidrio", categoria: "mesa-vidrio", precio: "$275.000", img: "https://via.placeholder.com/300x200", desc: "Elegante con vidrio templado para 6 personas." },
+            { id: 4, nombre: "Silla de Madera", categoria: "silla-madera", precio: "$45.000", img: "https://via.placeholder.com/300x200", desc: "Comodidad y estilo tradicional." },
+            { id: 5, nombre: "Silla de Metal", categoria: "silla-metal", precio: "$55.000", img: "https://via.placeholder.com/300x200", desc: "Perfecta para largas horas de uso." },
+            { id: 6, nombre: "Cama de Madera", categoria: "cama-madera", precio: "$120.000", img: "https://via.placeholder.com/300x200", desc: "Estructura sólida con diseño moderno (2 Plazas)." },
+            { id: 7, nombre: "Cama de Metal", categoria: "cama-metal", precio: "$200.000", img: "https://via.placeholder.com/300x200", desc: "Máximo confort y espacio (King Size)." },
+            { id: 8, nombre: "Sommier 2 Plazas", categoria: "sommier-2plazas", precio: "$220.000", img: "https://via.placeholder.com/300x200", desc: "Estructura sólida con diseño moderno." },
+            { id: 9, nombre: "Sommier King Size", categoria: "sommier-king", precio: "$400.000", img: "https://via.placeholder.com/300x200", desc: "Máximo confort y espacio." }
+        ];
+
+        let tagsSeleccionadas = new Set();
+
+        function renderFiltros() {
+            const container = document.getElementById("filtros-container");
+            let html = "";
+            categorias.forEach((cat, index) => {
+                const isOpen = index === 0 ? "open" : "";
+                html += `
+                    <details class="filtro-grupo" ${isOpen}>
+                        <summary>${cat.nombre}</summary>
+                        <div class="filtro-opciones">
+                            ${cat.tags.map(tag => `
+                                <span class="tag" data-tag="${tag.id}" onclick="toggleTag(this, '${tag.id}')">
+                                    ${tag.nombre}
+                                </span>
+                            `).join("")}
+                        </div>
+                    </details>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function toggleTag(el, tagId) {
+            if (tagsSeleccionadas.has(tagId)) {
+                tagsSeleccionadas.delete(tagId);
+                el.classList.remove("active");
+            } else {
+                tagsSeleccionadas.add(tagId);
+                el.classList.add("active");
+            }
+            renderTagsActivas();
+            renderProductos();
+        }
+
+        function renderTagsActivas() {
+            const container = document.getElementById("tags-activas-container");
+            const tagsDiv = document.getElementById("tags-activas");
+            if (tagsSeleccionadas.size === 0) {
+                container.style.display = "none";
+                return;
+            }
+            container.style.display = "block";
+            let html = "";
+            tagsSeleccionadas.forEach(tagId => {
+                const cat = categorias.find(c => c.tags.some(t => t.id === tagId));
+                const tag = cat.tags.find(t => t.id === tagId);
+                html += `<span class="tag-activa" onclick="removeTag('${tagId}')">${cat.nombre}: ${tag.nombre} ✕</span>`;
+            });
+            tagsDiv.innerHTML = html;
+        }
+
+        function removeTag(tagId) {
+            tagsSeleccionadas.delete(tagId);
+            document.querySelectorAll(`.tag[data-tag="${tagId}"]`).forEach(el => el.classList.remove("active"));
+            renderTagsActivas();
+            renderProductos();
+        }
+
+        function renderProductos() {
+            const grid = document.getElementById("productos-grid");
+            let filtrados = productos;
+            if (tagsSeleccionadas.size > 0) {
+                filtrados = productos.filter(p => tagsSeleccionadas.has(p.categoria));
+            }
+            if (filtrados.length === 0) {
+                grid.innerHTML = "<p>No hay productos que coincidan con los filtros seleccionados.</p>";
+                return;
+            }
+            grid.innerHTML = filtrados.map(p => `
+                <article class="producto-card">
+                    <div class="producto-imagen">
+                        <img src="${p.img}" alt="${p.nombre}">
+                    </div>
+                    <h3>${p.nombre}</h3>
+                    <p>${p.desc}</p>
+                    <p class="precio">${p.precio}</p>
+                </article>
+            `).join("");
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            renderFiltros();
+            renderProductos();
+        });
+    </script>
+
+</body>
+</html>
