@@ -15,7 +15,7 @@
                 <li><a href="index.html">Inicio</a></li>
                 <li><a href="catalogo.html">Catálogo</a></li>
                 <li><a href="alta-producto.html">Alta Producto</a></li>
-                <li><a href="#contacto">Contacto</a></li>
+                <li><a href="index.html#contacto">Contacto</a></li>
             </ul>
         </nav>
     </header>
@@ -67,7 +67,6 @@
                 nombre: "Camas",
                 tags: [
                     { id: "cama-madera", nombre: "Madera" },
-                    { id: "cama-metal", nombre: "Metal" }
                 ]
             },
             {
@@ -75,21 +74,18 @@
                 nombre: "Sommiers",
                 tags: [
                     { id: "sommier-2plazas", nombre: "2 Plazas" },
-                    { id: "sommier-king", nombre: "King Size" }
                 ]
             }
         ];
 
         const productos = [
-            { id: 1, nombre: "Mesa de Madera", categoria: "mesa-madera", precio: "$150.000", img: "https://via.placeholder.com/300x200", desc: "Mesa resistente ideal para comedor." },
-            { id: 2, nombre: "Mesa de Metal", categoria: "mesa-metal", precio: "$180.000", img: "https://via.placeholder.com/300x200", desc: "Diseño moderno y duradero." },
-            { id: 3, nombre: "Mesa de Vidrio", categoria: "mesa-vidrio", precio: "$275.000", img: "https://via.placeholder.com/300x200", desc: "Elegante con vidrio templado para 6 personas." },
-            { id: 4, nombre: "Silla de Madera", categoria: "silla-madera", precio: "$45.000", img: "https://via.placeholder.com/300x200", desc: "Comodidad y estilo tradicional." },
-            { id: 5, nombre: "Silla de Metal", categoria: "silla-metal", precio: "$55.000", img: "https://via.placeholder.com/300x200", desc: "Perfecta para largas horas de uso." },
-            { id: 6, nombre: "Cama de Madera", categoria: "cama-madera", precio: "$120.000", img: "https://via.placeholder.com/300x200", desc: "Estructura sólida con diseño moderno (2 Plazas)." },
-            { id: 7, nombre: "Cama de Metal", categoria: "cama-metal", precio: "$200.000", img: "https://via.placeholder.com/300x200", desc: "Máximo confort y espacio (King Size)." },
-            { id: 8, nombre: "Sommier 2 Plazas", categoria: "sommier-2plazas", precio: "$220.000", img: "https://via.placeholder.com/300x200", desc: "Estructura sólida con diseño moderno." },
-            { id: 9, nombre: "Sommier King Size", categoria: "sommier-king", precio: "$400.000", img: "https://via.placeholder.com/300x200", desc: "Máximo confort y espacio." }
+            { id: 1, nombre: "Mesa de Madera", categoria: "mesa-madera", precio: "$150.000", img: "https://silvinac.com.ar/wp-content/uploads/2024/10/Mesa-comedor-madera-Nordica-Classic-SILVINA-C-1213.jpg", desc: "Mesa resistente ideal para comedor." },
+            { id: 2, nombre: "Mesa de Metal", categoria: "mesa-metal", precio: "$180.000", img: "https://vegasalquila.com.ar/wp-content/uploads/2023/09/20210825162020-3685-1.jpg", desc: "Diseño moderno y duradero." },
+            { id: 3, nombre: "Mesa de Vidrio", categoria: "mesa-vidrio", precio: "$275.000", img: "https://www.dxxi.com.ar/wp-content/uploads/2023/08/dxxi-mesa-comedor-oculo-cuadrada-web-2.jpg", desc: "Elegante con vidrio templado para 8 personas." },
+            { id: 4, nombre: "Silla de Madera", categoria: "silla-madera", precio: "$45.000", img: "https://http2.mlstatic.com/D_Q_NP_2X_725185-MLA100045878687_122025-T.webp", desc: "Comodidad y estilo tradicional." },
+            { id: 5, nombre: "Silla de Metal", categoria: "silla-metal", precio: "$55.000", img: "https://http2.mlstatic.com/D_823377-MLA92859523826_092025-O.webp", desc: "Diseño moderno para comedor." },
+            { id: 6, nombre: "Cama de Madera", categoria: "cama-madera", precio: "$120.000", img: "https://http2.mlstatic.com/D_880948-MLA99470669232_112025-C.jpg", desc: "Estructura sólida con diseño moderno (2 Plazas)." },
+            { id: 8, nombre: "Sommier 2 Plazas", categoria: "sommier-2plazas", precio: "$220.000", img: "https://http2.mlstatic.com/D_Q_NP_2X_695222-MLA108648875369_032026-T.webp", desc: "Estructura sólida con diseño tradicional (2 Plazas)." },
         ];
 
         let tagsSeleccionadas = new Set();
