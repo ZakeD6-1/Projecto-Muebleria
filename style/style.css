@@ -279,6 +279,39 @@ button[type="reset"]:hover {
     width: 320px;
 }
 
+.carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: var(--color-white);
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--transition);
+    opacity: 0.8;
+}
+
+.carousel-arrow:hover {
+    opacity: 1;
+    background: #5a7d60;
+}
+
+.carousel-arrow-left {
+    left: 10px;
+}
+
+.carousel-arrow-right {
+    right: 10px;
+}
+
 /* Product Grid Styles */
 .productos-grid {
     display: grid;

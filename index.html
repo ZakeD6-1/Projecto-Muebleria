@@ -30,115 +30,9 @@
             <h2>Productos Destacados</h2>
 
             <div class="carousel-container">
-                <div class="carousel-track">
-                    <article class="producto-card carousel-item">
-                        <div class="producto-imagen">
-                            <img src="https://via.placeholder.com/300x200" alt="Mesa de madera">
-                        </div>
-                        <h3>Mesa de Madera</h3>
-                        <p>Mesa resistente ideal para comedor.</p>
-                        <p class="precio">$150.000</p>
-                    </article>
-
-                    <article class="producto-card carousel-item">
-                        <div class="producto-imagen">
-                            <img src="https://via.placeholder.com/300x200" alt="Mesa de metal">
-                        </div>
-                        <h3>Mesa de Metal</h3>
-                        <p>Diseño moderno y duradero.</p>
-                        <p class="precio">$180.000</p>
-                    </article>
-
-                    <article class="producto-card carousel-item">
-                        <div class="producto-imagen">
-                            <img src="https://via.placeholder.com/300x200" alt="Silla de madera">
-                        </div>
-                        <h3>Silla de Madera</h3>
-                        <p>Comodidad y estilo tradicional.</p>
-                        <p class="precio">$45.000</p>
-                    </article>
-
-                    <article class="producto-card carousel-item">
-                        <div class="producto-imagen">
-                            <img src="https://via.placeholder.com/300x200" alt="Silla de metal">
-                        </div>
-                        <h3>Silla de Metal</h3>
-                        <p>Perfecta para largas horas de uso.</p>
-                        <p class="precio">$55.000</p>
-                    </article>
-
-                    <article class="producto-card carousel-item">
-                        <div class="producto-imagen">
-                            <img src="https://via.placeholder.com/300x200" alt="Cama de madera">
-                        </div>
-                        <h3>Cama de Madera (2 Plazas)</h3>
-                        <p>Estructura sólida con diseño moderno.</p>
-                        <p class="precio">$120.000</p>
-                    </article>
-
-                    <article class="producto-card carousel-item">
-                        <div class="producto-imagen">
-                            <img src="https://via.placeholder.com/300x200" alt="Cama de metal">
-                        </div>
-                        <h3>Cama de Metal (King Size)</h3>
-                        <p>Máximo confort y espacio.</p>
-                        <p class="precio">$200.000</p>
-                    </article>
-
-                    <article class="producto-card carousel-item">
-                        <div class="producto-imagen">
-                            <img src="https://via.placeholder.com/300x200" alt="Mesa de madera">
-                        </div>
-                        <h3>Mesa de Madera</h3>
-                        <p>Mesa resistente ideal para comedor.</p>
-                        <p class="precio">$150.000</p>
-                    </article>
-
-                    <article class="producto-card carousel-item">
-                        <div class="producto-imagen">
-                            <img src="https://via.placeholder.com/300x200" alt="Mesa de metal">
-                        </div>
-                        <h3>Mesa de Metal</h3>
-                        <p>Diseño moderno y duradero.</p>
-                        <p class="precio">$180.000</p>
-                    </article>
-
-                    <article class="producto-card carousel-item">
-                        <div class="producto-imagen">
-                            <img src="https://via.placeholder.com/300x200" alt="Silla de madera">
-                        </div>
-                        <h3>Silla de Madera</h3>
-                        <p>Comodidad y estilo tradicional.</p>
-                        <p class="precio">$45.000</p>
-                    </article>
-
-                    <article class="producto-card carousel-item">
-                        <div class="producto-imagen">
-                            <img src="https://via.placeholder.com/300x200" alt="Silla de metal">
-                        </div>
-                        <h3>Silla de Metal</h3>
-                        <p>Perfecta para largas horas de uso.</p>
-                        <p class="precio">$55.000</p>
-                    </article>
-
-                    <article class="producto-card carousel-item">
-                        <div class="producto-imagen">
-                            <img src="https://via.placeholder.com/300x200" alt="Cama de madera">
-                        </div>
-                        <h3>Cama de Madera (2 Plazas)</h3>
-                        <p>Estructura sólida con diseño moderno.</p>
-                        <p class="precio">$120.000</p>
-                    </article>
-
-                    <article class="producto-card carousel-item">
-                        <div class="producto-imagen">
-                            <img src="https://via.placeholder.com/300x200" alt="Cama de metal">
-                        </div>
-                        <h3>Cama de Metal (King Size)</h3>
-                        <p>Máximo confort y espacio.</p>
-                        <p class="precio">$200.000</p>
-                    </article>
-                </div>
+                <button class="carousel-arrow carousel-arrow-left" id="arrow-left">&#9664;</button>
+                <div class="carousel-track" id="carousel-track"></div>
+                <button class="carousel-arrow carousel-arrow-right" id="arrow-right">&#9654;</button>
             </div>
         </section>
 
@@ -159,13 +53,35 @@
     </footer>
 
     <script>
+        // Editá las imágenes acá — cada producto tiene su propio "img"
+        const productosDestacados = [
+            { nombre: "Mesa de Madera", img: "https://silvinac.com.ar/wp-content/uploads/2024/10/Mesa-comedor-madera-Nordica-Classic-SILVINA-C-1213.jpg", desc: "Mesa resistente ideal para comedor.", precio: "$150.000" },
+            { nombre: "Mesa de Metal", img: "https://vegasalquila.com.ar/wp-content/uploads/2023/09/20210825162020-3685-1.jpg", desc: "Diseño moderno y duradero.", precio: "$180.000" },
+            { nombre: "Silla de Madera", img: "https://http2.mlstatic.com/D_Q_NP_2X_725185-MLA100045878687_122025-T.webp", desc: "Comodidad y estilo tradicional.", precio: "$45.000" },
+            { nombre: "Silla de Metal", img: "https://http2.mlstatic.com/D_823377-MLA92859523826_092025-O.webp", desc: "Perfecta para largas horas de uso.", precio: "$55.000" },
+            { nombre: "Cama de Madera (2 Plazas)", img: "https://http2.mlstatic.com/D_880948-MLA99470669232_112025-C.jpg", desc: "Estructura sólida con diseño moderno.", precio: "$120.000" },
+            { nombre: "Sommier 2 Plazas", img: "https://http2.mlstatic.com/D_Q_NP_2X_695222-MLA108648875369_032026-T.webp", desc: "Estructura sólida con diseño moderno.", precio: "$220.000" },
+        ];
+
         document.addEventListener("DOMContentLoaded", function () {
-            const track = document.querySelector(".carousel-track");
+            const track = document.getElementById("carousel-track");
+            const items = [...productosDestacados, ...productosDestacados];
+            track.innerHTML = items.map(p => `
+                <article class="producto-card carousel-item">
+                    <div class="producto-imagen">
+                        <img src="${p.img}" alt="${p.nombre}">
+                    </div>
+                    <h3>${p.nombre}</h3>
+                    <p>${p.desc}</p>
+                    <p class="precio">${p.precio}</p>
+                </article>
+            `).join("");
+
             let isDragging = false;
             let startX = 0;
             let scrollLeft = 0;
-            let animationId;
             let isPaused = false;
+            let scrollTimeout;
             const halfWidth = () => track.scrollWidth / 2;
             let initialized = false;
 
@@ -187,7 +103,7 @@
                     track.scrollLeft += 0.5;
                     wrapScroll();
                 }
-                animationId = requestAnimationFrame(autoScroll);
+                requestAnimationFrame(autoScroll);
             }
 
             autoScroll();
@@ -209,7 +125,6 @@
                 isDragging = true;
                 startX = e.pageX - track.offsetLeft;
                 scrollLeft = track.scrollLeft;
-                cancelAnimationFrame(animationId);
                 track.style.cursor = "grabbing";
             });
 
@@ -218,14 +133,43 @@
                 e.preventDefault();
                 const x = e.pageX - track.offsetLeft;
                 const walk = (x - startX) * 1.5;
-                track.scrollLeft = scrollLeft - walk;
+                let newScroll = scrollLeft - walk;
+                const hw = halfWidth();
+                if (newScroll < 0) {
+                    newScroll += hw;
+                    startX = x;
+                    scrollLeft = newScroll;
+                } else if (newScroll >= hw) {
+                    newScroll -= hw;
+                    startX = x;
+                    scrollLeft = newScroll;
+                }
+                track.scrollLeft = newScroll;
             });
 
             track.addEventListener("mouseup", function () {
                 isDragging = false;
                 track.style.cursor = "";
                 wrapScroll();
-                autoScroll();
+            });
+
+            function scrollByCard(dir) {
+                const cardWidth = 320 + 24;
+                isPaused = true;
+                track.scrollLeft += dir * cardWidth;
+                wrapScroll();
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(function () {
+                    isPaused = false;
+                }, 3000);
+            }
+
+            document.getElementById("arrow-left").addEventListener("click", function () {
+                scrollByCard(-1);
+            });
+
+            document.getElementById("arrow-right").addEventListener("click", function () {
+                scrollByCard(1);
             });
         });
     </script>
