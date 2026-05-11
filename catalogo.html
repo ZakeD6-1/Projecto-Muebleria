@@ -14,23 +14,41 @@
             <ul>
                 <li><a href="index.html">Inicio</a></li>
                 <li><a href="catalogo.html">Catálogo</a></li>
-                <li><a href="alta-producto.html">Alta Producto</a></li>
+                <li id="nav-alta-producto"><a href="alta-producto.html">Alta Producto</a></li>
                 <li><a href="index.html#contacto">Contacto</a></li>
+                <li id="nav-login"></li>
+                <li id="nav-carrito"><a href="carrito.html" id="carrito-link">
+                    <svg id="carrito-icono" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                    </svg>
+                    <span id="carrito-badge" class="carrito-badge">2</span>
+                </a></li>
             </ul>
         </nav>
     </header>
 
     <main>
 
-        <section id="catalogo-filtros">
-            <h2>Filtros</h2>
-            <div id="filtros-container"></div>
+        <button id="filtros-toggle" class="filtros-toggle" onclick="toggleFiltros()">☰ Filtros</button>
 
-            <div id="tags-activas-container" style="display:none;">
-                <h3>Filtros activos</h3>
-                <div id="tags-activas"></div>
+        <div id="filtros-overlay" class="filtros-overlay">
+            <div class="filtros-overlay-backdrop" onclick="toggleFiltros()"></div>
+            <div class="filtros-overlay-content">
+                <section id="catalogo-filtros">
+                    <div class="filtros-header">
+                        <h2>Filtros</h2>
+                        <button class="filtros-cerrar" onclick="toggleFiltros()">✕</button>
+                    </div>
+                    <div id="filtros-container"></div>
+
+                    <div id="tags-activas-container" style="display:none;">
+                        <h3>Filtros activos</h3>
+                        <div id="tags-activas"></div>
+                    </div>
+                </section>
             </div>
-        </section>
+        </div>
 
         <section id="productos-catalogo">
             <h2>Productos</h2>
@@ -39,10 +57,27 @@
 
     </main>
 
+    <div id="producto-modal" class="producto-modal">
+        <div class="producto-modal-backdrop" onclick="closeProductoModal()"></div>
+        <div class="producto-modal-content">
+            <button class="producto-modal-cerrar" onclick="closeProductoModal()">✕</button>
+            <div class="producto-modal-img">
+                <img id="modal-img" src="" alt="">
+            </div>
+            <div class="producto-modal-body">
+                <h2 id="modal-nombre"></h2>
+                <p id="modal-desc"></p>
+                <p class="precio" id="modal-precio"></p>
+                <button class="btn-comprar" onclick="alert('Funcionalidad no disponible')">Agregar al carrito</button>
+            </div>
+        </div>
+    </div>
+
     <footer id="contacto">
         <p>&copy; 2026 Muebleria</p>
     </footer>
 
+    <script src="auth.js"></script>
     <script>
         const categorias = [
             {
@@ -79,12 +114,12 @@
         ];
 
         const productos = [
-            { id: 1, nombre: "Mesa de Madera", categoria: "mesa-madera", precio: "$150.000", img: "https://silvinac.com.ar/wp-content/uploads/2024/10/Mesa-comedor-madera-Nordica-Classic-SILVINA-C-1213.jpg", desc: "Mesa resistente ideal para comedor." },
-            { id: 2, nombre: "Mesa de Metal", categoria: "mesa-metal", precio: "$180.000", img: "https://vegasalquila.com.ar/wp-content/uploads/2023/09/20210825162020-3685-1.jpg", desc: "Diseño moderno y duradero." },
-            { id: 3, nombre: "Mesa de Vidrio", categoria: "mesa-vidrio", precio: "$275.000", img: "https://www.dxxi.com.ar/wp-content/uploads/2023/08/dxxi-mesa-comedor-oculo-cuadrada-web-2.jpg", desc: "Elegante con vidrio templado para 8 personas." },
-            { id: 4, nombre: "Silla de Madera", categoria: "silla-madera", precio: "$45.000", img: "https://http2.mlstatic.com/D_Q_NP_2X_725185-MLA100045878687_122025-T.webp", desc: "Comodidad y estilo tradicional." },
-            { id: 5, nombre: "Silla de Metal", categoria: "silla-metal", precio: "$55.000", img: "https://http2.mlstatic.com/D_823377-MLA92859523826_092025-O.webp", desc: "Diseño moderno para comedor." },
-            { id: 6, nombre: "Cama de Madera", categoria: "cama-madera", precio: "$120.000", img: "https://http2.mlstatic.com/D_880948-MLA99470669232_112025-C.jpg", desc: "Estructura sólida con diseño moderno (2 Plazas)." },
+            { id: 1, nombre: "Mesa de Madera", categoria: "mesa-madera", precio: "$150.000", img: "https://silvinac.com.ar/wp-content/uploads/2024/10/Mesa-comedor-madera-Nordica-Classic-SILVINA-C-1213.jpg", desc: "Mesa de roble resistente para comedor (8 sillas)." },
+            { id: 2, nombre: "Mesa de Metal", categoria: "mesa-metal", precio: "$180.000", img: "https://vegasalquila.com.ar/wp-content/uploads/2023/09/20210825162020-3685-1.jpg", desc: "Mesa de acero inoxidable, diseño moderno y duradero." },
+            { id: 3, nombre: "Mesa de Vidrio", categoria: "mesa-vidrio", precio: "$275.000", img: "https://www.dxxi.com.ar/wp-content/uploads/2023/08/dxxi-mesa-comedor-oculo-cuadrada-web-2.jpg", desc: "Mesa elegante con vidrio templado (8 sillas)." },
+            { id: 4, nombre: "Silla de Madera", categoria: "silla-madera", precio: "$45.000", img: "https://http2.mlstatic.com/D_Q_NP_2X_725185-MLA100045878687_122025-T.webp", desc: "Silla de haya, comodidad y estilo tradicional." },
+            { id: 5, nombre: "Silla de Metal", categoria: "silla-metal", precio: "$55.000", img: "https://http2.mlstatic.com/D_823377-MLA92859523826_092025-O.webp", desc: "Silla de acero inoxidable, diseño moderno para comedor." },
+            { id: 6, nombre: "Cama de Madera", categoria: "cama-madera", precio: "$120.000", img: "https://http2.mlstatic.com/D_880948-MLA99470669232_112025-C.jpg", desc: "Cama de arce, estructura sólida con diseño moderno (2 Plazas)." },
             { id: 8, nombre: "Sommier 2 Plazas", categoria: "sommier-2plazas", precio: "$220.000", img: "https://http2.mlstatic.com/D_Q_NP_2X_695222-MLA108648875369_032026-T.webp", desc: "Estructura sólida con diseño tradicional (2 Plazas)." },
         ];
 
@@ -157,22 +192,57 @@
                 grid.innerHTML = "<p>No hay productos que coincidan con los filtros seleccionados.</p>";
                 return;
             }
-            grid.innerHTML = filtrados.map(p => `
+            grid.innerHTML = filtrados.map((p, i) => `
                 <article class="producto-card">
                     <div class="producto-imagen">
                         <img src="${p.img}" alt="${p.nombre}">
                     </div>
                     <h3>${p.nombre}</h3>
-                    <p>${p.desc}</p>
                     <p class="precio">${p.precio}</p>
+                    <div class="producto-acciones">
+                        <button class="btn-ver" data-index="${i}">Ver</button>
+                        <button class="btn-comprar-card" onclick="alert('Funcionalidad no disponible')">Agregar al carrito</button>
+                    </div>
                 </article>
             `).join("");
+            window.__filtrados = filtrados;
+        }
+
+        function toggleFiltros() {
+            document.getElementById('filtros-overlay').classList.toggle('active');
+            document.body.classList.toggle('no-scroll');
         }
 
         document.addEventListener("DOMContentLoaded", function () {
             renderFiltros();
             renderProductos();
+
+            document.getElementById("productos-grid").addEventListener("click", function (e) {
+                const btn = e.target.closest(".btn-ver");
+                if (btn) {
+                    const index = parseInt(btn.dataset.index);
+                    const product = window.__filtrados[index];
+                    if (product) openProductoModal(product);
+                }
+            });
         });
+
+        function openProductoModal(product) {
+            const modal = document.getElementById("producto-modal");
+            document.getElementById("modal-img").src = product.img;
+            document.getElementById("modal-img").alt = product.nombre;
+            document.getElementById("modal-nombre").textContent = product.nombre;
+            document.getElementById("modal-desc").textContent = product.desc;
+            document.getElementById("modal-precio").textContent = product.precio;
+            modal.classList.add("active");
+            document.body.classList.add("no-scroll");
+        }
+
+        function closeProductoModal() {
+            const modal = document.getElementById("producto-modal");
+            modal.classList.remove("active");
+            document.body.classList.remove("no-scroll");
+        }
     </script>
 
 </body>
