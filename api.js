@@ -56,6 +56,26 @@ async function supaGetProducto(id) {
   return mapearProducto(data);
 }
 
+async function supaGetCategorias() {
+  const { data, error } = await _supabase
+    .from('Productos')
+    .select('categoria')
+    .order('categoria', { ascending: true });
+  if (error) throw error;
+  var mapa = {};
+  (data || []).forEach(function (r) {
+    if (r.categoria) mapa[r.categoria] = true;
+  });
+  return Object.keys(mapa).map(function (id) {
+    var nombre = id.charAt(0).toUpperCase() + id.slice(1);
+    if (id === 'mesa') nombre = 'Mesas';
+    else if (id === 'silla') nombre = 'Sillas';
+    else if (id === 'cama') nombre = 'Camas';
+    else if (id === 'sommier') nombre = 'Sommiers';
+    return { id: id, nombre: nombre };
+  });
+}
+
 async function supaCreateProducto(obj) {
   const { data, error } = await _supabase
     .from('Productos')

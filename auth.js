@@ -90,13 +90,14 @@ async function updateCarritoBadge() {
         badge.style.display = "none";
         return;
     }
-    const { count, error } = await _supabase
+    const { data, error } = await _supabase
         .from('Carrito')
-        .select('*', { count: 'exact', head: true })
+        .select('cantidad')
         .eq('usuario_id', getUserId());
     if (!error) {
-        badge.textContent = count || 0;
-        badge.style.display = count > 0 ? "inline" : "none";
+        const total = data?.reduce((sum, item) => sum + item.cantidad, 0) || 0;
+        badge.textContent = total;
+        badge.style.display = total > 0 ? "flex" : "none";
     }
 }
 

@@ -94,7 +94,7 @@
             try {
                 var todos = await supaGetProductos();
                 destacados = todos.filter(function (p) { return p.destacado; });
-                nuevos = todos.slice(0, 4);
+                nuevos = todos.slice(0, 3);
             } catch (e) {
                 console.error("Error al cargar productos:", e);
             }

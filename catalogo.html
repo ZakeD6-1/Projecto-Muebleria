@@ -183,28 +183,36 @@
     <script src="auth.js"></script>
     <script src="api.js"></script>
     <script>
-        const categorias = [
-            {
-                id: "mesa", nombre: "Mesas",
-                tags: [{ id: "madera", nombre: "Madera" }, { id: "metal", nombre: "Metal" }, { id: "vidrio", nombre: "Vidrio" }]
-            },
-            {
-                id: "silla", nombre: "Sillas",
-                tags: [{ id: "madera", nombre: "Madera" }, { id: "metal", nombre: "Metal" }]
-            },
-            {
-                id: "cama", nombre: "Camas",
-                tags: [{ id: "madera", nombre: "Madera" }, { id: "2 plazas", nombre: "2 Plazas" }]
-            },
-            {
-                id: "sommier", nombre: "Sommiers",
-                tags: [{ id: "2 plazas", nombre: "2 Plazas" }]
-            },
-        ];
-
+        let categorias = [];
         let productos = [];
         let categoriaSeleccionada = null;
         let tagsSeleccionadas = new Set();
+
+        function computedCategorias() {
+            var mapa = {};
+            productos.forEach(function (p) {
+                if (!mapa[p.categoria]) {
+                    var nombre = p.categoria.charAt(0).toUpperCase() + p.categoria.slice(1);
+                    mapa[p.categoria] = { id: p.categoria, nombre: nombre, tags: [] };
+                }
+            });
+            var cats = Object.values(mapa);
+            cats.forEach(function (cat) {
+                var tagMap = {};
+                productos.forEach(function (p) {
+                    if (p.categoria === cat.id) {
+                        (p.tags || []).forEach(function (t) {
+                            var tid = t.toLowerCase().replace(/\s+/g, "-");
+                            if (!tagMap[tid]) {
+                                tagMap[tid] = { id: tid, nombre: t };
+                            }
+                        });
+                    }
+                });
+                cat.tags = Object.values(tagMap);
+            });
+            return cats;
+        }
 
         function renderFiltros() {
             const container = document.getElementById("filtros-container");
@@ -345,6 +353,8 @@
         async function cargarProductos() {
             try {
                 productos = await supaGetProductos();
+                categorias = computedCategorias();
+                renderFiltros();
                 renderProductos();
             } catch (e) {
                 document.getElementById("productos-grid").innerHTML =
@@ -377,7 +387,6 @@
         }
 
         document.addEventListener("DOMContentLoaded", function () {
-            renderFiltros();
             cargarProductos();
 
             document.getElementById("productos-grid").addEventListener("click", function (e) {

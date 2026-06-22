@@ -6,6 +6,9 @@
     <title>Carrito - Muebleria</title>
     <link rel="stylesheet" href="style/style.css">
     <style>
+        body { min-height: 100vh; display: flex; flex-direction: column; }
+        main { flex: 1 0 auto; }
+        footer { flex-shrink: 0; margin-top: 0; }
         .carrito-vacio {
             text-align: center;
             padding: 60px 20px;
@@ -226,16 +229,8 @@
             }
         }
 
-        async function comprar() {
-            if (!confirm("¿Confirmar compra?")) return;
-            try {
-                await supaLimpiarCarrito(getUserId());
-                alert("Compra realizada con éxito.");
-                await cargarCarrito();
-                updateCarritoBadge();
-            } catch (e) {
-                alert("Error: " + e.message);
-            }
+        function comprar() {
+            window.location.href = "checkout.html";
         }
 
         function openCarritoProducto(nombre, img, desc, precio) {
