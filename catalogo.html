@@ -5,6 +5,107 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo - Muebleria</title>
     <link rel="stylesheet" href="style/style.css">
+    <style>
+        .producto-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+        .producto-tags .tag {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            background: #e8f0e9;
+            color: #4a7c5a;
+            border-radius: 12px;
+            cursor: default;
+        }
+        .btn-editar, .btn-eliminar {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .btn-editar {
+            background: #f0d86e;
+            color: #333;
+        }
+        .btn-editar:hover {
+            background: #e0c85e;
+        }
+        .btn-eliminar {
+            background: #e74c3c;
+            color: #fff;
+        }
+        .btn-eliminar:hover {
+            background: #c0392b;
+        }
+        .producto-card .producto-acciones {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+        }
+        .filtro-seccion {
+            margin-bottom: 16px;
+        }
+        .filtro-seccion h3 {
+            font-size: 0.9rem;
+            color: #666;
+            margin: 0 0 8px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .categoria-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .categoria-pill {
+            padding: 6px 14px;
+            border: 2px solid #ddd;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            background: #fff;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .categoria-pill:hover {
+            border-color: #4a7c5a;
+            color: #4a7c5a;
+        }
+        .categoria-pill.active {
+            background: #4a7c5a;
+            border-color: #4a7c5a;
+            color: #fff;
+        }
+        .tags-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .tag-chip {
+            padding: 4px 12px;
+            border: 1px solid #ccc;
+            border-radius: 14px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            background: #fff;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .tag-chip:hover {
+            border-color: #8ab4a0;
+            background: #f0f7f3;
+        }
+        .tag-chip.active {
+            background: #8ab4a0;
+            border-color: #8ab4a0;
+            color: #fff;
+        }
+    </style>
 </head>
 <body>
 
@@ -68,7 +169,7 @@
                 <h2 id="modal-nombre"></h2>
                 <p id="modal-desc"></p>
                 <p class="precio" id="modal-precio"></p>
-                <button class="btn-comprar" onclick="alert('Funcionalidad no disponible')">Agregar al carrito</button>
+                <button class="btn-comprar" id="modal-add-cart">Agregar al carrito</button>
             </div>
         </div>
     </div>
@@ -77,83 +178,92 @@
         <p>&copy; 2026 Muebleria</p>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
     <script src="auth.js"></script>
+    <script src="api.js"></script>
     <script>
         const categorias = [
             {
-                id: "mesas",
-                nombre: "Mesas",
-                tags: [
-                    { id: "mesa-madera", nombre: "Madera" },
-                    { id: "mesa-metal", nombre: "Metal" },
-                    { id: "mesa-vidrio", nombre: "Vidrio" }
-                ]
+                id: "mesa", nombre: "Mesas",
+                tags: [{ id: "madera", nombre: "Madera" }, { id: "metal", nombre: "Metal" }, { id: "vidrio", nombre: "Vidrio" }]
             },
             {
-                id: "sillas",
-                nombre: "Sillas",
-                tags: [
-                    { id: "silla-madera", nombre: "Madera" },
-                    { id: "silla-metal", nombre: "Metal" }
-                ]
+                id: "silla", nombre: "Sillas",
+                tags: [{ id: "madera", nombre: "Madera" }, { id: "metal", nombre: "Metal" }]
             },
             {
-                id: "camas",
-                nombre: "Camas",
-                tags: [
-                    { id: "cama-madera", nombre: "Madera" },
-                ]
+                id: "cama", nombre: "Camas",
+                tags: [{ id: "madera", nombre: "Madera" }, { id: "2 plazas", nombre: "2 Plazas" }]
             },
             {
-                id: "sommiers",
-                nombre: "Sommiers",
-                tags: [
-                    { id: "sommier-2plazas", nombre: "2 Plazas" },
-                ]
-            }
+                id: "sommier", nombre: "Sommiers",
+                tags: [{ id: "2 plazas", nombre: "2 Plazas" }]
+            },
         ];
 
-        const productos = [
-            { id: 1, nombre: "Mesa de Madera", categoria: "mesa-madera", precio: "$150.000", img: "https://silvinac.com.ar/wp-content/uploads/2024/10/Mesa-comedor-madera-Nordica-Classic-SILVINA-C-1213.jpg", desc: "Mesa de roble resistente para comedor (8 sillas)." },
-            { id: 2, nombre: "Mesa de Metal", categoria: "mesa-metal", precio: "$180.000", img: "https://vegasalquila.com.ar/wp-content/uploads/2023/09/20210825162020-3685-1.jpg", desc: "Mesa de acero inoxidable, diseño moderno y duradero." },
-            { id: 3, nombre: "Mesa de Vidrio", categoria: "mesa-vidrio", precio: "$275.000", img: "https://www.dxxi.com.ar/wp-content/uploads/2023/08/dxxi-mesa-comedor-oculo-cuadrada-web-2.jpg", desc: "Mesa elegante con vidrio templado (8 sillas)." },
-            { id: 4, nombre: "Silla de Madera", categoria: "silla-madera", precio: "$45.000", img: "https://http2.mlstatic.com/D_Q_NP_2X_725185-MLA100045878687_122025-T.webp", desc: "Silla de haya, comodidad y estilo tradicional." },
-            { id: 5, nombre: "Silla de Metal", categoria: "silla-metal", precio: "$55.000", img: "https://http2.mlstatic.com/D_823377-MLA92859523826_092025-O.webp", desc: "Silla de acero inoxidable, diseño moderno para comedor." },
-            { id: 6, nombre: "Cama de Madera", categoria: "cama-madera", precio: "$120.000", img: "https://http2.mlstatic.com/D_880948-MLA99470669232_112025-C.jpg", desc: "Cama de arce, estructura sólida con diseño moderno (2 Plazas)." },
-            { id: 8, nombre: "Sommier 2 Plazas", categoria: "sommier-2plazas", precio: "$220.000", img: "https://http2.mlstatic.com/D_Q_NP_2X_695222-MLA108648875369_032026-T.webp", desc: "Estructura sólida con diseño tradicional (2 Plazas)." },
-        ];
-
+        let productos = [];
+        let categoriaSeleccionada = null;
         let tagsSeleccionadas = new Set();
 
         function renderFiltros() {
             const container = document.getElementById("filtros-container");
-            let html = "";
-            categorias.forEach((cat, index) => {
-                const isOpen = index === 0 ? "open" : "";
-                html += `
-                    <details class="filtro-grupo" ${isOpen}>
-                        <summary>${cat.nombre}</summary>
-                        <div class="filtro-opciones">
-                            ${cat.tags.map(tag => `
-                                <span class="tag" data-tag="${tag.id}" onclick="toggleTag(this, '${tag.id}')">
-                                    ${tag.nombre}
-                                </span>
-                            `).join("")}
-                        </div>
-                    </details>
-                `;
+
+            var html = '<div class="filtro-seccion"><h3>Categor\u00eda</h3><div class="categoria-pills">';
+            html += '<span class="categoria-pill' + (categoriaSeleccionada === null ? ' active' : '') + '" onclick="seleccionarCategoria(null)">Todas</span>';
+            categorias.forEach(function (cat) {
+                html += '<span class="categoria-pill' + (categoriaSeleccionada === cat.id ? ' active' : '') + '" onclick="seleccionarCategoria(\'' + cat.id + '\')">' + cat.nombre + '</span>';
             });
+            html += '</div></div>';
+
+            var tagsDisponibles = [];
+            if (categoriaSeleccionada) {
+                var cat = categorias.find(function (c) { return c.id === categoriaSeleccionada; });
+                if (cat) tagsDisponibles = cat.tags;
+            } else {
+                categorias.forEach(function (c) {
+                    c.tags.forEach(function (t) {
+                        if (!tagsDisponibles.some(function (x) { return x.id === t.id; })) {
+                            tagsDisponibles.push(t);
+                        }
+                    });
+                });
+            }
+
+            if (tagsDisponibles.length > 0) {
+                html += '<div class="filtro-seccion"><h3>Tags</h3><div class="tags-chips">';
+                tagsDisponibles.forEach(function (t) {
+                    html += '<span class="tag-chip' + (tagsSeleccionadas.has(t.id) ? ' active' : '') + '" onclick="toggleTag(\'' + t.id + '\')">' + t.nombre + '</span>';
+                });
+                html += '</div></div>';
+            }
+
             container.innerHTML = html;
         }
 
-        function toggleTag(el, tagId) {
+        function seleccionarCategoria(catId) {
+            categoriaSeleccionada = catId;
+            if (catId) {
+                var cat = categorias.find(function (c) { return c.id === catId; });
+                if (cat) {
+                    var validIds = cat.tags.map(function (t) { return t.id; });
+                    tagsSeleccionadas.forEach(function (t) {
+                        if (!validIds.includes(t)) tagsSeleccionadas.delete(t);
+                    });
+                }
+            }
+            renderFiltros();
+            renderTagsActivas();
+            renderProductos();
+        }
+
+        function toggleTag(tagId) {
             if (tagsSeleccionadas.has(tagId)) {
                 tagsSeleccionadas.delete(tagId);
-                el.classList.remove("active");
             } else {
                 tagsSeleccionadas.add(tagId);
-                el.classList.add("active");
             }
+            renderFiltros();
             renderTagsActivas();
             renderProductos();
         }
@@ -161,23 +271,32 @@
         function renderTagsActivas() {
             const container = document.getElementById("tags-activas-container");
             const tagsDiv = document.getElementById("tags-activas");
-            if (tagsSeleccionadas.size === 0) {
+            var hasFilters = categoriaSeleccionada !== null || tagsSeleccionadas.size > 0;
+            if (!hasFilters) {
                 container.style.display = "none";
                 return;
             }
             container.style.display = "block";
-            let html = "";
-            tagsSeleccionadas.forEach(tagId => {
-                const cat = categorias.find(c => c.tags.some(t => t.id === tagId));
-                const tag = cat.tags.find(t => t.id === tagId);
-                html += `<span class="tag-activa" onclick="removeTag('${tagId}')">${cat.nombre}: ${tag.nombre} ✕</span>`;
+            var html = "";
+            if (categoriaSeleccionada) {
+                var cat = categorias.find(function (c) { return c.id === categoriaSeleccionada; });
+                html += '<span class="tag-activa" onclick="seleccionarCategoria(null)">Categor\u00eda: ' + (cat ? cat.nombre : categoriaSeleccionada) + ' \u2715</span>';
+            }
+            tagsSeleccionadas.forEach(function (tagId) {
+                categorias.forEach(function (c) {
+                    c.tags.forEach(function (t) {
+                        if (t.id === tagId) {
+                            html += '<span class="tag-activa" onclick="removeTag(\'' + tagId + '\')">' + c.nombre + ': ' + t.nombre + ' \u2715</span>';
+                        }
+                    });
+                });
             });
             tagsDiv.innerHTML = html;
         }
 
         function removeTag(tagId) {
             tagsSeleccionadas.delete(tagId);
-            document.querySelectorAll(`.tag[data-tag="${tagId}"]`).forEach(el => el.classList.remove("active"));
+            renderFiltros();
             renderTagsActivas();
             renderProductos();
         }
@@ -185,26 +304,36 @@
         function renderProductos() {
             const grid = document.getElementById("productos-grid");
             let filtrados = productos;
-            if (tagsSeleccionadas.size > 0) {
-                filtrados = productos.filter(p => tagsSeleccionadas.has(p.categoria));
+
+            if (categoriaSeleccionada) {
+                filtrados = filtrados.filter(function (p) { return p.categoria === categoriaSeleccionada; });
             }
+            if (tagsSeleccionadas.size > 0) {
+                filtrados = filtrados.filter(function (p) {
+                    return (p.tags || []).some(function (t) { return tagsSeleccionadas.has(t); });
+                });
+            }
+
             if (filtrados.length === 0) {
                 grid.innerHTML = "<p>No hay productos que coincidan con los filtros seleccionados.</p>";
                 return;
             }
-            grid.innerHTML = filtrados.map((p, i) => `
-                <article class="producto-card">
-                    <div class="producto-imagen">
-                        <img src="${p.img}" alt="${p.nombre}">
-                    </div>
-                    <h3>${p.nombre}</h3>
-                    <p class="precio">${p.precio}</p>
-                    <div class="producto-acciones">
-                        <button class="btn-ver" data-index="${i}">Ver</button>
-                        <button class="btn-comprar-card" onclick="alert('Funcionalidad no disponible')">Agregar al carrito</button>
-                    </div>
-                </article>
-            `).join("");
+            grid.innerHTML = filtrados.map(function (p, i) {
+                return '<article class="producto-card">' +
+                    '<div class="producto-imagen">' +
+                        '<img src="' + p.imagen + '" alt="' + p.nombre + '">' +
+                    '</div>' +
+                    '<h3>' + p.nombre + '</h3>' +
+                    '<p class="precio">' + formatPrecioConDesc(p) + '</p>' +
+                    '<div class="producto-tags">' +
+                        p.tags.map(function (t) { return '<span class="tag">' + t + '</span>'; }).join("") +
+                    '</div>' +
+                    '<div class="producto-acciones">' +
+                        '<button class="btn-ver" data-index="' + i + '">Ver</button>' +
+                        (isLoggedIn() ? '<button class="btn-comprar-card" onclick="agregarAlCarrito(' + p.id + ')">Agregar al carrito</button>' : '<button class="btn-comprar-card" onclick="openLoginModal()">Agregar al carrito</button>') +
+                    '</div>' +
+                '</article>';
+            }).join("");
             window.__filtrados = filtrados;
         }
 
@@ -213,27 +342,70 @@
             document.body.classList.toggle('no-scroll');
         }
 
+        async function cargarProductos() {
+            try {
+                productos = await supaGetProductos();
+                renderProductos();
+            } catch (e) {
+                document.getElementById("productos-grid").innerHTML =
+                    '<p>Error al cargar productos desde la base de datos.</p>';
+            }
+        }
+
+        function mostrarToast(msg) {
+            var t = document.getElementById("toast-msg");
+            if (!t) {
+                t = document.createElement("div");
+                t.id = "toast-msg";
+                t.style.cssText = "position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:12px 24px;border-radius:8px;z-index:9999;font-size:1rem;transition:opacity 0.3s;opacity:0;";
+                document.body.appendChild(t);
+            }
+            t.textContent = msg;
+            t.style.opacity = "1";
+            clearTimeout(t._hide);
+            t._hide = setTimeout(function () { t.style.opacity = "0"; }, 2500);
+        }
+
+        async function agregarAlCarrito(productoId) {
+            try {
+                await supaAddToCart(getUserId(), productoId, 1);
+                mostrarToast("Agregado al carrito");
+                updateCarritoBadge();
+            } catch (e) {
+                mostrarToast("Error al agregar: " + e.message);
+            }
+        }
+
         document.addEventListener("DOMContentLoaded", function () {
             renderFiltros();
-            renderProductos();
+            cargarProductos();
 
             document.getElementById("productos-grid").addEventListener("click", function (e) {
-                const btn = e.target.closest(".btn-ver");
+                var btn = e.target.closest(".btn-ver");
                 if (btn) {
-                    const index = parseInt(btn.dataset.index);
-                    const product = window.__filtrados[index];
+                    var index = parseInt(btn.dataset.index);
+                    var product = window.__filtrados[index];
                     if (product) openProductoModal(product);
                 }
             });
         });
 
+        let currentModalProduct = null;
+
         function openProductoModal(product) {
+            currentModalProduct = product;
             const modal = document.getElementById("producto-modal");
-            document.getElementById("modal-img").src = product.img;
+            const btn = document.getElementById("modal-add-cart");
+            document.getElementById("modal-img").src = product.imagen;
             document.getElementById("modal-img").alt = product.nombre;
             document.getElementById("modal-nombre").textContent = product.nombre;
-            document.getElementById("modal-desc").textContent = product.desc;
-            document.getElementById("modal-precio").textContent = product.precio;
+            document.getElementById("modal-desc").textContent = product.descripcion;
+            document.getElementById("modal-precio").innerHTML = formatPrecioConDesc(product);
+            if (isLoggedIn()) {
+                btn.onclick = function () { agregarAlCarrito(product.id); };
+            } else {
+                btn.onclick = function () { closeProductoModal(); openLoginModal(); };
+            }
             modal.classList.add("active");
             document.body.classList.add("no-scroll");
         }
