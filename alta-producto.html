@@ -294,7 +294,7 @@
                             (img ? "<img src='" + img + "' alt='" + p.nombre + "' style='width:60px;height:60px;object-fit:cover;border-radius:6px;display:block;'>" : "") +
                         "</td>" +
                         "<td style='padding:8px;'>" + p.nombre + "</td>" +
-                        "<td style='padding:8px;'>" + p.categoria + "</td>" +
+                        "<td style='padding:8px;'>" + p.categoria.split('-').map(function (w) { return w.charAt(0).toUpperCase() + w.slice(1); }).join(' ') + "</td>" +
                         "<td style='padding:8px;'>" + formatPrecio(p.precio) + "</td>" +
                         "<td style='padding:8px;'>" + (p.descuento > 0 ? p.descuento + "%" : "-") + "</td>" +
                         "<td style='padding:8px;'>" + p.stock + "</td>" +
