@@ -30,8 +30,9 @@
 
     <main>
         <section id="bienvenida">
-            <h2>Bienvenido a nuestra tienda</h2>
-            <p>Ofrecemos muebles de alta calidad para tu hogar. Descubrí nuestras mesas, sillas y camas.</p>
+            <h2>Muebles con estilo para tu hogar</h2>
+            <p>Descubrí nuestra colección de mesas, sillas, camas y sommiers. Calidad y diseño al mejor precio.</p>
+            <a href="catalogo.html" class="btn-hero">Ver catálogo</a>
         </section>
 
         <section id="productos">
@@ -42,6 +43,11 @@
                 <div class="carousel-track" id="carousel-track"></div>
                 <button class="carousel-arrow carousel-arrow-right" id="arrow-right">&#9654;</button>
             </div>
+        </section>
+
+        <section id="nuevos-productos">
+            <h2>Nuevos Productos</h2>
+            <div id="nuevos-grid" class="productos-grid"></div>
         </section>
 
         <section id="nosotros">
@@ -76,149 +82,131 @@
         <p>&copy; 2026 Muebleria</p>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
     <script src="auth.js"></script>
+    <script src="api.js"></script>
     <script>
-        // Imagenes de productos destacados
-        const productosDestacados = [
-            { nombre: "Mesa de Madera", img: "https://silvinac.com.ar/wp-content/uploads/2024/10/Mesa-comedor-madera-Nordica-Classic-SILVINA-C-1213.jpg", desc: "Mesa resistente ideal para comedor.", precio: "$150.000" },
-            { nombre: "Mesa de Metal", img: "https://vegasalquila.com.ar/wp-content/uploads/2023/09/20210825162020-3685-1.jpg", desc: "Diseño moderno y duradero.", precio: "$180.000" },
-            { nombre: "Silla de Madera", img: "https://http2.mlstatic.com/D_Q_NP_2X_725185-MLA100045878687_122025-T.webp", desc: "Comodidad y estilo tradicional.", precio: "$45.000" },
-            { nombre: "Silla de Metal", img: "https://http2.mlstatic.com/D_823377-MLA92859523826_092025-O.webp", desc: "Perfecta para largas horas de uso.", precio: "$55.000" },
-            { nombre: "Cama de Madera (2 Plazas)", img: "https://http2.mlstatic.com/D_880948-MLA99470669232_112025-C.jpg", desc: "Estructura sólida con diseño moderno.", precio: "$120.000" },
-            { nombre: "Sommier 2 Plazas", img: "https://http2.mlstatic.com/D_Q_NP_2X_695222-MLA108648875369_032026-T.webp", desc: "Estructura sólida con diseño moderno.", precio: "$220.000" },
-        ];
+        let destacados = [];
+        let nuevos = [];
 
-        document.addEventListener("DOMContentLoaded", function () {
+        async function cargarIndex() {
+            try {
+                var todos = await supaGetProductos();
+                destacados = todos.filter(function (p) { return p.destacado; });
+                nuevos = todos.slice(0, 4);
+            } catch (e) {
+                console.error("Error al cargar productos:", e);
+            }
+            renderCarousel();
+            renderNuevos();
+        }
+
+        function renderCarousel() {
             const track = document.getElementById("carousel-track");
-            const items = [...productosDestacados, ...productosDestacados];
-            track.innerHTML = items.map((p, i) => `
-                <article class="producto-card carousel-item">
-                    <div class="producto-imagen">
-                        <img src="${p.img}" alt="${p.nombre}">
-                    </div>
-                    <h3>${p.nombre}</h3>
-                    <p class="precio">${p.precio}</p>
-                    <button class="btn-ver" data-index="${i}">Ver</button>
-                </article>
-            `).join("");
+            if (destacados.length === 0) {
+                track.innerHTML = '<p style="text-align:center;padding:2rem;color:var(--color-text-light);">No hay productos destacados.</p>';
+                return;
+            }
+            var items = [...destacados, ...destacados];
+            track.innerHTML = items.map(function (p, i) {
+                return '<article class="producto-card carousel-item">' +
+                    '<div class="producto-imagen">' +
+                        '<img src="' + p.imagen + '" alt="' + p.nombre + '">' +
+                    '</div>' +
+                    '<h3>' + p.nombre + '</h3>' +
+                    '<p class="precio">' + formatPrecioConDesc(p) + '</p>' +
+                    '<button class="btn-ver" data-index="' + i + '">Ver</button>' +
+                '</article>';
+            }).join("");
 
-            let isDragging = false;
-            let startX = 0;
-            let scrollLeft = 0;
-            let isPaused = false;
-            let scrollTimeout;
-            const halfWidth = () => track.scrollWidth / 2;
-            let initialized = false;
+            var halfWidth = function () { return track.scrollWidth / 2; };
+            var isDragging = false, startX = 0, scrollLeft = 0, isPaused = false;
+            var scrollTimeout, initialized = false;
 
             function wrapScroll() {
-                if (track.scrollLeft >= halfWidth()) {
-                    track.scrollLeft -= halfWidth();
-                }
-                if (track.scrollLeft <= 0) {
-                    track.scrollLeft += halfWidth();
-                }
+                if (track.scrollLeft >= halfWidth()) { track.scrollLeft -= halfWidth(); }
+                if (track.scrollLeft <= 0) { track.scrollLeft += halfWidth(); }
             }
 
             function autoScroll() {
-                if (!initialized) {
-                    track.scrollLeft = halfWidth();
-                    initialized = true;
-                }
-                if (!isDragging && !isPaused) {
-                    track.scrollLeft += 0.5;
-                    wrapScroll();
-                }
+                if (!initialized) { track.scrollLeft = halfWidth(); initialized = true; }
+                if (!isDragging && !isPaused) { track.scrollLeft += 0.5; wrapScroll(); }
                 requestAnimationFrame(autoScroll);
             }
-
             autoScroll();
 
-            track.addEventListener("mouseenter", function () {
-                isPaused = true;
-            });
-
+            track.addEventListener("mouseenter", function () { isPaused = true; });
             track.addEventListener("mouseleave", function () {
                 isPaused = false;
-                if (isDragging) {
-                    isDragging = false;
-                    track.style.cursor = "";
-                    wrapScroll();
-                }
+                if (isDragging) { isDragging = false; track.style.cursor = ""; wrapScroll(); }
             });
-
             track.addEventListener("mousedown", function (e) {
-                isDragging = true;
-                startX = e.pageX - track.offsetLeft;
-                scrollLeft = track.scrollLeft;
-                track.style.cursor = "grabbing";
+                isDragging = true; startX = e.pageX - track.offsetLeft; scrollLeft = track.scrollLeft; track.style.cursor = "grabbing";
             });
-
             track.addEventListener("mousemove", function (e) {
-                if (!isDragging) return;
-                e.preventDefault();
-                const x = e.pageX - track.offsetLeft;
-                const walk = (x - startX) * 1.5;
-                let newScroll = scrollLeft - walk;
-                const hw = halfWidth();
-                if (newScroll < 0) {
-                    newScroll += hw;
-                    startX = x;
-                    scrollLeft = newScroll;
-                } else if (newScroll >= hw) {
-                    newScroll -= hw;
-                    startX = x;
-                    scrollLeft = newScroll;
-                }
-                track.scrollLeft = newScroll;
+                if (!isDragging) return; e.preventDefault();
+                var x = e.pageX - track.offsetLeft;
+                var walk = (x - startX) * 1.5;
+                var ns = scrollLeft - walk;
+                var hw = halfWidth();
+                if (ns < 0) { ns += hw; startX = x; scrollLeft = ns; }
+                else if (ns >= hw) { ns -= hw; startX = x; scrollLeft = ns; }
+                track.scrollLeft = ns;
             });
-
-            track.addEventListener("mouseup", function () {
-                isDragging = false;
-                track.style.cursor = "";
-                wrapScroll();
-            });
+            track.addEventListener("mouseup", function () { isDragging = false; track.style.cursor = ""; wrapScroll(); });
 
             function scrollByCard(dir) {
-                const cardWidth = 320 + 24;
-                isPaused = true;
-                track.scrollLeft += dir * cardWidth;
-                wrapScroll();
-                clearTimeout(scrollTimeout);
-                scrollTimeout = setTimeout(function () {
-                    isPaused = false;
-                }, 3000);
+                isPaused = true; track.scrollLeft += dir * (320 + 24); wrapScroll();
+                clearTimeout(scrollTimeout); scrollTimeout = setTimeout(function () { isPaused = false; }, 3000);
             }
-
-            document.getElementById("arrow-left").addEventListener("click", function () {
-                scrollByCard(-1);
-            });
-
-            document.getElementById("arrow-right").addEventListener("click", function () {
-                scrollByCard(1);
-            });
+            document.getElementById("arrow-left").addEventListener("click", function () { scrollByCard(-1); });
+            document.getElementById("arrow-right").addEventListener("click", function () { scrollByCard(1); });
 
             track.addEventListener("click", function (e) {
-                const btn = e.target.closest(".btn-ver");
+                var btn = e.target.closest(".btn-ver");
                 if (btn) {
-                    const index = parseInt(btn.dataset.index);
-                    openProductoModal(items[index]);
+                    var idx = parseInt(btn.dataset.index);
+                    abrirModal(destacados[idx % destacados.length]);
                 }
             });
+        }
+
+        function renderNuevos() {
+            var grid = document.getElementById("nuevos-grid");
+            if (nuevos.length === 0) {
+                grid.innerHTML = '<p style="text-align:center;padding:2rem;color:var(--color-text-light);">No hay productos.</p>';
+                return;
+            }
+            grid.innerHTML = nuevos.map(function (p, i) {
+                return '<article class="producto-card">' +
+                    '<div class="producto-imagen">' +
+                        '<img src="' + p.imagen + '" alt="' + p.nombre + '">' +
+                    '</div>' +
+                    '<h3>' + p.nombre + '</h3>' +
+                    '<p class="precio">' + formatPrecioConDesc(p) + '</p>' +
+                    '<div style="padding:0 1rem 1rem;"><button class="btn-ver" onclick="abrirModal(nuevos[' + i + '])">Ver</button></div>' +
+                '</article>';
+            }).join("");
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            cargarIndex();
         });
 
-        function openProductoModal(product) {
-            const modal = document.getElementById("producto-modal");
-            document.getElementById("modal-img").src = product.img;
-            document.getElementById("modal-img").alt = product.nombre;
-            document.getElementById("modal-nombre").textContent = product.nombre;
-            document.getElementById("modal-desc").textContent = product.desc;
-            document.getElementById("modal-precio").textContent = product.precio;
+        function abrirModal(p) {
+            var modal = document.getElementById("producto-modal");
+            document.getElementById("modal-img").src = p.imagen;
+            document.getElementById("modal-img").alt = p.nombre;
+            document.getElementById("modal-nombre").textContent = p.nombre;
+            document.getElementById("modal-desc").textContent = p.descripcion;
+            document.getElementById("modal-precio").innerHTML = formatPrecioConDesc(p);
             modal.classList.add("active");
             document.body.classList.add("no-scroll");
         }
 
         function closeProductoModal() {
-            const modal = document.getElementById("producto-modal");
+            var modal = document.getElementById("producto-modal");
             modal.classList.remove("active");
             document.body.classList.remove("no-scroll");
         }

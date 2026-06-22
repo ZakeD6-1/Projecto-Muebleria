@@ -5,6 +5,97 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carrito - Muebleria</title>
     <link rel="stylesheet" href="style/style.css">
+    <style>
+        .carrito-vacio {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+        .carrito-vacio a {
+            color: #4a7c5a;
+            font-weight: bold;
+        }
+        .carrito-tabla {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 16px;
+        }
+        .carrito-tabla th, .carrito-tabla td {
+            padding: 12px 8px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+        .carrito-tabla th {
+            background: #f5f5f5;
+        }
+        .carrito-thumb {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-right: 12px;
+            vertical-align: middle;
+        }
+        .carrito-producto {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .carrito-cantidad {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .carrito-cantidad button {
+            width: 28px;
+            height: 28px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: #fff;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .carrito-cantidad button:hover {
+            background: #eee;
+        }
+        .carrito-cantidad span {
+            min-width: 24px;
+            text-align: center;
+        }
+        .btn-eliminar-item {
+            background: none;
+            border: none;
+            color: #e74c3c;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+        .carrito-acciones {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 16px;
+        }
+        .carrito-total {
+            text-align: right;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+        .carrito-login-msg {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        .carrito-login-msg button {
+            margin-top: 12px;
+            padding: 10px 24px;
+            background: #4a7c5a;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+    </style>
 </head>
 <body>
 
@@ -22,7 +113,7 @@
                         <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
                         <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
                     </svg>
-                    <span id="carrito-badge" class="carrito-badge">2</span>
+                    <span id="carrito-badge" class="carrito-badge">0</span>
                 </a></li>
             </ul>
         </nav>
@@ -30,34 +121,7 @@
 
     <main>
         <h1>Carrito de compras</h1>
-
-        <section id="carrito-contenido">
-            <table class="carrito-tabla">
-                <thead>
-                    <tr><th>Producto</th><th>Precio</th></tr>
-                </thead>
-                <tbody>
-                    <tr class="carrito-fila" onclick="openCarritoProducto('Mesa de Vidrio','https://www.dxxi.com.ar/wp-content/uploads/2023/08/dxxi-mesa-comedor-oculo-cuadrada-web-2.jpg','Elegante con vidrio templado para 8 personas.','$275.000')">
-                        <td class="carrito-producto">
-                            <img class="carrito-thumb" src="https://www.dxxi.com.ar/wp-content/uploads/2023/08/dxxi-mesa-comedor-oculo-cuadrada-web-2.jpg" alt="Mesa de Vidrio">
-                            Mesa de Vidrio
-                        </td>
-                        <td>$275.000</td>
-                    </tr>
-                    <tr class="carrito-fila" onclick="openCarritoProducto('Silla de Madera','https://http2.mlstatic.com/D_Q_NP_2X_725185-MLA100045878687_122025-T.webp','Comodidad y estilo tradicional.','$45.000')">
-                        <td class="carrito-producto">
-                            <img class="carrito-thumb" src="https://http2.mlstatic.com/D_Q_NP_2X_725185-MLA100045878687_122025-T.webp" alt="Silla de Madera">
-                            Silla de Madera
-                        </td>
-                        <td>$45.000</td>
-                    </tr>
-                </tbody>
-                <tfoot>
-                    <tr><td><strong>Total</strong></td><td><strong>$320.000</strong></td></tr>
-                </tfoot>
-            </table>
-            <button class="btn-comprar" onclick="alert('Funcionalidad no disponible')">Comprar</button>
-        </section>
+        <section id="carrito-contenido"></section>
     </main>
 
     <div id="producto-modal" class="producto-modal">
@@ -71,7 +135,6 @@
                 <h2 id="carrito-modal-nombre"></h2>
                 <p id="carrito-modal-desc"></p>
                 <p class="precio" id="carrito-modal-precio"></p>
-                <button class="btn-comprar" onclick="alert('Funcionalidad no disponible')">Comprar</button>
             </div>
         </div>
     </div>
@@ -80,8 +143,101 @@
         <p>&copy; 2026 Muebleria</p>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
     <script src="auth.js"></script>
+    <script src="api.js"></script>
     <script>
+        async function cargarCarrito() {
+            var container = document.getElementById("carrito-contenido");
+            if (!isLoggedIn()) {
+                container.innerHTML =
+                    '<div class="carrito-login-msg">' +
+                        '<p>Inicia sesión para ver tu carrito.</p>' +
+                        '<button onclick="openLoginModal()">Iniciar sesión</button>' +
+                    '</div>';
+                return;
+            }
+            try {
+                var items = await supaGetCarrito(getUserId());
+                if (items.length === 0) {
+                    container.innerHTML =
+                        '<div class="carrito-vacio">' +
+                            '<p>Tu carrito está vacío.</p>' +
+                            '<a href="catalogo.html">Ir al catálogo</a>' +
+                        '</div>';
+                    return;
+                }
+                var total = 0;
+                var html = '<table class="carrito-tabla">' +
+                    '<thead><tr><th>Producto</th><th>Precio</th><th>Cantidad</th><th>Subtotal</th><th></th></tr></thead><tbody>';
+                items.forEach(function (item) {
+                    var p = item.Productos;
+                    var desc = p.descuento || 0;
+                    var precioFinal = desc > 0 ? Math.round(p.precio * (1 - desc / 100)) : p.precio;
+                    var subtotal = precioFinal * item.cantidad;
+                    total += subtotal;
+                    var img = p.imagen || "";
+                    html += '<tr>' +
+                        '<td class="carrito-producto">' +
+                            (img ? '<img class="carrito-thumb" src="' + img + '" alt="' + p.nombre + '">' : '') +
+                            '<span>' + p.nombre + '</span>' +
+                        '</td>' +
+                        '<td>' + (desc > 0 ? formatPrecio(precioFinal) + ' <span class="badge-descuento">-' + desc + '%</span>' : formatPrecio(p.precio)) + '</td>' +
+                        '<td>' +
+                            '<div class="carrito-cantidad">' +
+                                '<button onclick="cambiarCantidad(' + item.id + ', ' + (item.cantidad - 1) + ')">-</button>' +
+                                '<span>' + item.cantidad + '</span>' +
+                                '<button onclick="cambiarCantidad(' + item.id + ', ' + (item.cantidad + 1) + ')">+</button>' +
+                            '</div>' +
+                        '</td>' +
+                        '<td>' + formatPrecio(subtotal) + '</td>' +
+                        '<td><button class="btn-eliminar-item" onclick="eliminarItem(' + item.id + ')">✕</button></td>' +
+                    '</tr>';
+                });
+                html += '</tbody></table>';
+                html += '<div class="carrito-total">Total: ' + formatPrecio(total) + '</div>';
+                html += '<div class="carrito-acciones">' +
+                    '<button class="btn-comprar" onclick="comprar()">Comprar</button>' +
+                '</div>';
+                container.innerHTML = html;
+            } catch (e) {
+                container.innerHTML = '<p>Error al cargar el carrito: ' + e.message + '</p>';
+            }
+        }
+
+        async function cambiarCantidad(cartItemId, nuevaCant) {
+            try {
+                await supaUpdateCantidad(cartItemId, nuevaCant);
+                await cargarCarrito();
+                updateCarritoBadge();
+            } catch (e) {
+                alert("Error: " + e.message);
+            }
+        }
+
+        async function eliminarItem(cartItemId) {
+            try {
+                await supaRemoveFromCart(cartItemId);
+                await cargarCarrito();
+                updateCarritoBadge();
+            } catch (e) {
+                alert("Error: " + e.message);
+            }
+        }
+
+        async function comprar() {
+            if (!confirm("¿Confirmar compra?")) return;
+            try {
+                await supaLimpiarCarrito(getUserId());
+                alert("Compra realizada con éxito.");
+                await cargarCarrito();
+                updateCarritoBadge();
+            } catch (e) {
+                alert("Error: " + e.message);
+            }
+        }
+
         function openCarritoProducto(nombre, img, desc, precio) {
             const modal = document.getElementById("producto-modal");
             document.getElementById("carrito-modal-img").src = img;
@@ -98,6 +254,10 @@
             modal.classList.remove("active");
             document.body.classList.remove("no-scroll");
         }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            cargarCarrito();
+        });
     </script>
 </body>
 </html>

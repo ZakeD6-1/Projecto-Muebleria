@@ -32,9 +32,8 @@
 
     <h1>Alta de Producto</h1>
 
-    <form action="#" method="POST" enctype="multipart/form-data">
+    <form id="producto-form">
 
-        <!-- Nombre -->
         <div>
             <label for="nombre">Nombre del producto</label><br>
             <input type="text" id="nombre" name="nombre" required>
@@ -42,7 +41,6 @@
 
         <br>
 
-        <!-- Descripción -->
         <div>
             <label for="descripcion">Descripción</label><br>
             <textarea id="descripcion" name="descripcion" rows="4" required></textarea>
@@ -50,7 +48,6 @@
 
         <br>
 
-        <!-- Precio -->
         <div>
             <label for="precio">Precio</label><br>
             <input type="number" id="precio" name="precio" step="0.01" required>
@@ -58,29 +55,34 @@
 
         <br>
 
-        <!-- Stock -->
-        <div>
-            <label for="stock">Stock</label><br>
-            <input type="number" id="stock" name="stock" required>
-        </div>
-
-        <br>
-
-        <!-- Categoría -->
         <div>
             <label for="categoria">Categoría</label><br>
             <select id="categoria" name="categoria" required>
                 <option value="">Seleccione una categoría</option>
-                <option value="mesas">Mesas</option>
-                <option value="sillas">Sillas</option>
-                <option value="camas">Camas</option>
-                <option value="sommiers">Sommiers</option>
+                <option value="mesa">Mesas</option>
+                <option value="silla">Sillas</option>
+                <option value="cama">Camas</option>
+                <option value="sommier">Sommiers</option>
             </select>
         </div>
 
         <br>
 
-        <!-- Marca -->
+        <div>
+            <label for="tags">Tags (separados por coma)</label><br>
+            <input type="text" id="tags" name="tags" placeholder="ej: Madera, Metal, Rústico" required>
+            <small>El primer tag se usa para filtrar en el catálogo.</small>
+        </div>
+
+        <br>
+
+        <div>
+            <label for="imagen-url">URL de la imagen</label><br>
+            <input type="url" id="imagen-url" name="imagen" placeholder="https://ejemplo.com/imagen.jpg" required>
+        </div>
+
+        <br>
+
         <div>
             <label for="marca">Marca</label><br>
             <input type="text" id="marca" name="marca">
@@ -88,7 +90,6 @@
 
         <br>
 
-        <!-- SKU -->
         <div>
             <label for="sku">SKU</label><br>
             <input type="text" id="sku" name="sku">
@@ -96,27 +97,24 @@
 
         <br>
 
-        <!-- Imagen -->
         <div>
-            <label for="imagen">Imagen del producto</label><br>
-            <input type="file" id="imagen" name="imagen" accept="image/*" required>
+            <label for="descuento">Descuento (%)</label><br>
+            <input type="number" id="descuento" name="descuento" min="0" max="100" value="0">
         </div>
 
         <br>
 
-        <!-- Stock -->
         <div>
             <label>Stock</label><br>
-            <input type="radio" id="En Stock" name="Stock" value="En Stock" checked>
-            <label for="En Stock">Disponible</label>
+            <input type="radio" id="stock-si" name="stock" value="En Stock" checked>
+            <label for="stock-si">Disponible</label>
 
-            <input type="radio" id="Sin Stock" name="Stock" value="Sin Stock">
-            <label for="Sin Stock">Agotado</label>
+            <input type="radio" id="stock-no" name="stock" value="Sin Stock">
+            <label for="stock-no">Agotado</label>
         </div>
 
         <br>
 
-        <!-- Destacado -->
         <div>
             <input type="checkbox" id="destacado" name="destacado">
             <label for="destacado">Producto destacado</label>
@@ -124,7 +122,6 @@
 
         <br>
 
-        <!-- Botones -->
         <div>
             <button type="submit">Guardar producto</button>
             <button type="reset">Limpiar</button>
@@ -134,13 +131,78 @@
 
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
     <script src="auth.js"></script>
+    <script src="api.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            if (!isLoggedIn()) {
+            if (!isAdmin()) {
                 window.location.href = "index.html";
+                return;
             }
+
+            var params = new URLSearchParams(window.location.search);
+            var editId = params.get("edit");
+
+            if (editId) {
+                document.querySelector("h1").textContent = "Editar Producto";
+                cargarProductoParaEditar(editId);
+            }
+
+            document.getElementById("producto-form").addEventListener("submit", async function (e) {
+                e.preventDefault();
+                var data = {
+                    nombre: document.getElementById("nombre").value,
+                    descripcion: document.getElementById("descripcion").value,
+                    precio: parseFloat(document.getElementById("precio").value),
+                    categoria: document.getElementById("categoria").value,
+                    tags: document.getElementById("tags").value.split(",").map(function (t) { return t.trim(); }).filter(Boolean),
+                    imagen: document.getElementById("imagen-url").value,
+                    stock: document.querySelector('input[name="stock"]:checked').value,
+                    destacado: document.getElementById("destacado").checked,
+                    marca: document.getElementById("marca").value,
+                    sku: document.getElementById("sku").value,
+                    descuento: parseInt(document.getElementById("descuento").value) || 0,
+                };
+                try {
+                    if (editId) {
+                        await supaUpdateProducto(editId, data);
+                        alert("Producto actualizado correctamente.");
+                    } else {
+                        await supaCreateProducto(data);
+                        alert("Producto creado correctamente.");
+                        document.getElementById("producto-form").reset();
+                    }
+                } catch (err) {
+                    alert("Error: " + err.message);
+                }
+            });
         });
+
+        async function cargarProductoParaEditar(id) {
+            try {
+                var p = await supaGetProducto(id);
+                document.getElementById("nombre").value = p.nombre;
+                document.getElementById("descripcion").value = p.descripcion;
+                document.getElementById("precio").value = p.precio;
+                document.getElementById("categoria").value = p.categoria;
+                document.getElementById("tags").value = (p.tags || []).join(", ");
+                document.getElementById("imagen-url").value = p.imagen;
+                if (p.stock === "Sin Stock") {
+                    document.getElementById("stock-no").checked = true;
+                } else {
+                    document.getElementById("stock-si").checked = true;
+                }
+                document.getElementById("destacado").checked = p.destacado;
+                document.getElementById("marca").value = p.marca || "";
+                document.getElementById("sku").value = p.sku || "";
+                document.getElementById("descuento").value = p.descuento || 0;
+            } catch (err) {
+                alert("Error al cargar producto: " + err.message);
+            }
+        }
     </script>
+
 </body>
 </html>
