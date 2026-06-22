@@ -67,11 +67,7 @@ async function supaGetCategorias() {
     if (r.categoria) mapa[r.categoria] = true;
   });
   return Object.keys(mapa).map(function (id) {
-    var nombre = id.charAt(0).toUpperCase() + id.slice(1);
-    if (id === 'mesa') nombre = 'Mesas';
-    else if (id === 'silla') nombre = 'Sillas';
-    else if (id === 'cama') nombre = 'Camas';
-    else if (id === 'sommier') nombre = 'Sommiers';
+    var nombre = id.split('-').map(function (w) { return w.charAt(0).toUpperCase() + w.slice(1); }).join(' ');
     return { id: id, nombre: nombre };
   });
 }
