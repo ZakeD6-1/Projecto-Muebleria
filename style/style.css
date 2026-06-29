@@ -512,6 +512,9 @@ button[type="reset"]:hover {
 }
 
 /* Tags Activas */
+#tags-activas-container {
+    display: none;
+}
 #tags-activas-container h3 {
     color: var(--color-primary);
     margin-bottom: 0.75rem;
@@ -578,6 +581,16 @@ button[type="reset"]:hover {
     opacity: 0.9;
     max-width: 600px;
     margin: 1rem auto 1.5rem;
+}
+
+.mensaje-vacio {
+    text-align: center;
+    padding: 2rem;
+    color: var(--color-text-light);
+}
+.mensaje-vacio a {
+    color: var(--color-primary);
+    font-weight: 600;
 }
 
 .btn-hero {
@@ -757,6 +770,7 @@ button[type="reset"]:hover {
     color: #e74c3c;
     font-size: 0.9rem;
     margin-bottom: 0.5rem;
+    display: none;
 }
 
 .login-actions {
@@ -1233,4 +1247,388 @@ button[type="reset"]:hover {
         padding: 1.5rem;
         margin: 1rem;
     }
+}
+
+/* =============================================
+   Page: Sticky Footer Layout
+   ============================================= */
+.page-layout {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+.page-layout main {
+    flex: 1 0 auto;
+}
+.page-layout footer {
+    flex-shrink: 0;
+    margin-top: 0;
+}
+
+/* =============================================
+   Page: Catalogo - Filtros
+   ============================================= */
+.producto-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 8px;
+}
+.producto-tags .tag {
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    background: #e8f0e9;
+    color: #4a7c5a;
+    border-radius: 12px;
+    cursor: default;
+}
+.filtro-seccion {
+    margin-bottom: 16px;
+}
+.filtro-seccion h3 {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0 0 8px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.categoria-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.categoria-pill {
+    padding: 6px 14px;
+    border: 2px solid #ddd;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    background: #fff;
+    transition: all 0.2s;
+    user-select: none;
+}
+.categoria-pill:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+.categoria-pill.active {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #fff;
+}
+.tags-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.tag-chip {
+    padding: 4px 12px;
+    border: 1px solid #ccc;
+    border-radius: 14px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    background: #fff;
+    transition: all 0.2s;
+    user-select: none;
+}
+.tag-chip:hover {
+    border-color: #8ab4a0;
+    background: #f0f7f3;
+}
+.tag-chip.active {
+    background: #8ab4a0;
+    border-color: #8ab4a0;
+    color: #fff;
+}
+
+/* =============================================
+   Page: Carrito
+   ============================================= */
+.carrito-vacio {
+    text-align: center;
+    padding: 60px 20px;
+    color: #666;
+}
+.carrito-vacio a {
+    color: var(--color-primary);
+    font-weight: bold;
+}
+.carrito-cantidad {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.carrito-cantidad button {
+    width: 28px;
+    height: 28px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+    font-size: 1rem;
+}
+.carrito-cantidad button:hover {
+    background: #eee;
+}
+.carrito-cantidad span {
+    min-width: 24px;
+    text-align: center;
+}
+.btn-eliminar-item {
+    background: none;
+    border: none;
+    color: #e74c3c;
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+.carrito-acciones {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 16px;
+}
+.carrito-total {
+    text-align: right;
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-top: 8px;
+}
+.carrito-login-msg {
+    text-align: center;
+    padding: 60px 20px;
+}
+.carrito-login-msg button {
+    margin-top: 12px;
+    padding: 10px 24px;
+    background: var(--color-primary);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+/* =============================================
+   Page: Checkout
+   ============================================= */
+.checkout-page main {
+    width: 100%;
+    max-width: 600px;
+    margin: 2.5rem auto;
+    padding: 0 1rem;
+}
+.checkout-section {
+    background: var(--color-white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+}
+.checkout-section h2 {
+    color: var(--color-primary);
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--color-border);
+}
+.checkout-section h3 {
+    font-size: 1rem;
+    color: var(--color-text-light);
+    margin: 1.25rem 0 0.5rem;
+}
+.checkout-field {
+    margin-top: 12px;
+}
+.checkout-field label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--color-text-light);
+    margin-bottom: 4px;
+}
+.checkout-field input,
+.checkout-field select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: 0.95rem;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+.checkout-field input:focus,
+.checkout-field select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+.checkout-row {
+    display: flex;
+    gap: 12px;
+}
+.checkout-row .checkout-field {
+    flex: 1;
+}
+#checkout-resumen {
+    margin-top: 1rem;
+}
+#checkout-resumen table {
+    width: 100%;
+    border-collapse: collapse;
+}
+#checkout-resumen th,
+#checkout-resumen td {
+    padding: 8px 4px;
+    border-bottom: 1px solid var(--color-border);
+    text-align: left;
+    font-size: 0.9rem;
+}
+#checkout-resumen th {
+    color: var(--color-text-light);
+    font-weight: 500;
+}
+.checkout-total {
+    text-align: right;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--color-secondary);
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 2px solid var(--color-border);
+}
+#checkout-submit {
+    width: 100%;
+    padding: 14px;
+    background: var(--color-primary);
+    color: var(--color-white);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background var(--transition);
+}
+#checkout-submit:hover {
+    background: var(--color-primary-dark);
+}
+#checkout-submit:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+.checkout-vacio {
+    text-align: center;
+    padding: 80px 20px;
+}
+.checkout-vacio a {
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+/* =============================================
+   Page: Alta Producto - Utilidades
+   ============================================= */
+.btn-categoria-nueva {
+    margin-left: 8px;
+    padding: 4px 12px;
+    font-size: 0.85rem;
+    background: var(--color-primary);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.categoria-input-wrap {
+    display: none;
+    margin-top: 6px;
+}
+.input-categoria-nueva {
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+.btn-categoria-confirmar {
+    margin-left: 4px;
+    padding: 6px 12px;
+    background: var(--color-primary);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.btn-categoria-cancelar {
+    margin-left: 4px;
+    padding: 6px 12px;
+    background: #ccc;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.separador-productos {
+    margin: 3rem 0;
+}
+
+/* =============================================
+   Admin: Tabla de productos
+   ============================================= */
+.tabla-productos {
+    width: 100%;
+    border-collapse: collapse;
+}
+.tabla-productos thead th {
+    text-align: left;
+    background: #f5f5f5;
+    padding: 8px;
+}
+.tabla-productos tbody td {
+    padding: 8px;
+}
+.tabla-productos tbody tr {
+    border-bottom: 1px solid #ddd;
+}
+.tabla-productos .thumb {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 6px;
+    display: block;
+}
+.tabla-productos .btn-editar-link {
+    margin-right: 8px;
+    color: var(--color-primary);
+}
+.tabla-productos .btn-eliminar-admin {
+    background: none;
+    border: none;
+    color: #e74c3c;
+    cursor: pointer;
+}
+
+/* =============================================
+   Toast notification
+   ============================================= */
+#toast-msg {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 8px;
+    z-index: 9999;
+    font-size: 1rem;
+    transition: opacity 0.3s;
+    opacity: 0;
+}
+
+/* =============================================
+   Checkout: login prompt button
+   ============================================= */
+.btn-checkout-login {
+    margin-top: 12px;
+    padding: 10px 24px;
+    background: var(--color-primary);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
 }
