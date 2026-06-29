@@ -133,7 +133,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     <label for="login-pass">Contrase\u00f1a</label>
                     <input type="password" id="login-pass" name="password" required autocomplete="current-password">
                 </div>
-                <p id="login-error" class="login-error" style="display:none;">Usuario o contrase\u00f1a incorrectos.</p>
+                <p id="login-error" class="login-error">Usuario o contrase\u00f1a incorrectos.</p>
                 <div class="login-actions">
                     <button type="submit">Ingresar</button>
                 </div>
