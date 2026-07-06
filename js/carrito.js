@@ -1,5 +1,7 @@
+// Carga y renderiza el contenido del carrito
 async function cargarCarrito() {
     var container = document.getElementById("carrito-contenido");
+    // Si no hay sesión, muestra mensaje para iniciar sesión
     if (!isLoggedIn()) {
         container.innerHTML =
             '<div class="carrito-login-msg">' +
@@ -56,6 +58,7 @@ async function cargarCarrito() {
     }
 }
 
+// Cambia la cantidad de un item (soporta eliminación si llega a 0)
 async function cambiarCantidad(cartItemId, nuevaCant) {
     try {
         await supaUpdateCantidad(cartItemId, nuevaCant);
@@ -66,6 +69,7 @@ async function cambiarCantidad(cartItemId, nuevaCant) {
     }
 }
 
+// Elimina un item del carrito
 async function eliminarItem(cartItemId) {
     try {
         await supaRemoveFromCart(cartItemId);
@@ -76,10 +80,12 @@ async function eliminarItem(cartItemId) {
     }
 }
 
+// Redirige a la pantalla de pago
 function comprar() {
     window.location.href = "checkout.html";
 }
 
+// Modal de detalle del producto en el carrito
 function openCarritoProducto(nombre, img, desc, precio) {
     const modal = document.getElementById("producto-modal");
     document.getElementById("carrito-modal-img").src = img;

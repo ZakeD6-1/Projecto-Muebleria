@@ -1,14 +1,15 @@
+// Estado global de filtros y productos
 let categorias = [];
 let productos = [];
 let categoriaSeleccionada = null;
 let tagsSeleccionadas = new Set();
 
+// Agrupa productos por categoría y extrae los tags de cada una
 function computedCategorias() {
     var mapa = {};
     productos.forEach(function (p) {
         if (!mapa[p.categoria]) {
-            var nombre = p.categoria.split('-').map(function (w) { return w.charAt(0).toUpperCase() + w.slice(1); }).join(' ');
-            mapa[p.categoria] = { id: p.categoria, nombre: nombre, tags: [] };
+            mapa[p.categoria] = { id: p.categoria, nombre: p.categoria, tags: [] };
         }
     });
     var cats = Object.values(mapa);
@@ -29,6 +30,7 @@ function computedCategorias() {
     return cats;
 }
 
+// Renderiza los filtros de categoría y tags en la barra lateral
 function renderFiltros() {
     const container = document.getElementById("filtros-container");
 
@@ -64,6 +66,7 @@ function renderFiltros() {
     container.innerHTML = html;
 }
 
+// Selecciona una categoría y limpia tags que no pertenezcan a ella
 function seleccionarCategoria(catId) {
     categoriaSeleccionada = catId;
     if (catId) {
@@ -80,6 +83,7 @@ function seleccionarCategoria(catId) {
     renderProductos();
 }
 
+// Activa/desactiva un tag como filtro
 function toggleTag(tagId) {
     if (tagsSeleccionadas.has(tagId)) {
         tagsSeleccionadas.delete(tagId);
@@ -91,6 +95,7 @@ function toggleTag(tagId) {
     renderProductos();
 }
 
+// Muestra los filtros activos con opción para quitarlos
 function renderTagsActivas() {
     const container = document.getElementById("tags-activas-container");
     const tagsDiv = document.getElementById("tags-activas");
@@ -132,6 +137,7 @@ function renderTagsActivas() {
     tagsDiv.innerHTML = html;
 }
 
+// Quita un tag de los filtros activos
 function removeTag(tagId) {
     tagsSeleccionadas.delete(tagId);
     renderFiltros();
@@ -139,6 +145,7 @@ function removeTag(tagId) {
     renderProductos();
 }
 
+// Filtra y renderiza la grilla de productos según categoría y tags seleccionados
 function renderProductos() {
     const grid = document.getElementById("productos-grid");
     let filtrados = productos;
@@ -175,11 +182,15 @@ function renderProductos() {
     window.__filtrados = filtrados;
 }
 
+// Abre/cierra el panel de filtros en mobile
 function toggleFiltros() {
     document.getElementById('filtros-overlay').classList.toggle('active');
     document.body.classList.toggle('no-scroll');
 }
 
+// --- Carga inicial ---
+
+// Obtiene los productos desde Supabase e inicializa filtros y grilla
 async function cargarProductos() {
     try {
         productos = await supaGetProductos();
@@ -192,6 +203,9 @@ async function cargarProductos() {
     }
 }
 
+// --- Carrito desde el catálogo ---
+
+// Muestra un toast flotante temporal
 function mostrarToast(msg) {
     var t = document.getElementById("toast-msg");
     if (!t) {
@@ -206,6 +220,7 @@ function mostrarToast(msg) {
     t._hide = setTimeout(function () { t.style.opacity = "0"; }, 2500);
 }
 
+// Agrega un producto al carrito y actualiza el badge
 async function agregarAlCarrito(productoId) {
     try {
         await supaAddToCart(getUserId(), productoId, 1);
@@ -219,6 +234,7 @@ async function agregarAlCarrito(productoId) {
 document.addEventListener("DOMContentLoaded", function () {
     cargarProductos();
 
+    // Delegación de eventos para botones "Ver" dentro de la grilla
     document.getElementById("productos-grid").addEventListener("click", function (e) {
         var btn = e.target.closest(".btn-ver");
         if (btn) {
@@ -231,6 +247,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 let currentModalProduct = null;
 
+// Modal de detalle del producto en el catálogo
 function openProductoModal(product) {
     currentModalProduct = product;
     const modal = document.getElementById("producto-modal");

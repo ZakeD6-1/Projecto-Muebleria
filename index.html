@@ -8,20 +8,24 @@
     <meta name="description" content="Tienda online de muebles. Encontrá mesas, sillas, camas y más de la mejor calidad al mejor precio.">
 </head>
 <body>
+    <!-- Encabezado con navegación principal -->
     <header>
         <h1>Muebleria</h1>
         <nav>
             <ul>
                 <li><a href="index.html">Inicio</a></li>
                 <li><a href="catalogo.html">Catálogo</a></li>
+                <!-- Solo visible para administradores (controlado por auth.js) -->
                 <li id="nav-alta-producto"><a href="alta-producto.html">Alta Producto</a></li>
                 <li><a href="#contacto">Contacto</a></li>
+                <!-- Botón de login/logout generado por auth.js -->
                 <li id="nav-login"></li>
                 <li id="nav-carrito"><a href="carrito.html" id="carrito-link">
                     <svg id="carrito-icono" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
                         <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
                     </svg>
+                    <!-- Badge con cantidad de items en el carrito -->
                     <span id="carrito-badge" class="carrito-badge">2</span>
                 </a></li>
             </ul>
@@ -29,12 +33,14 @@
     </header>
 
     <main>
+        <!-- Sección de bienvenida con llamado a la acción -->
         <section id="bienvenida">
             <h2>Muebles con estilo para tu hogar</h2>
             <p>Descubrí nuestra colección de mesas, sillas, camas y sommiers. Calidad y diseño al mejor precio.</p>
             <a href="catalogo.html" class="btn-hero">Ver catálogo</a>
         </section>
 
+        <!-- Carrusel de productos destacados con auto-play -->
         <section id="productos">
             <h2>Productos Destacados</h2>
 
@@ -45,11 +51,13 @@
             </div>
         </section>
 
+        <!-- Grilla de los últimos 3 productos agregados -->
         <section id="nuevos-productos">
             <h2>Nuevos Productos</h2>
             <div id="nuevos-grid" class="productos-grid"></div>
         </section>
 
+        <!-- Información de la empresa y contacto -->
         <section id="nosotros">
             <h2>Sobre Nosotros</h2>
             <p>Somos una empresa dedicada a la venta de muebles con más de 30 años de experiencia en el mercado. Nuestro objetivo es proporcionar muebles de calidad a los mejores precios.</p>
@@ -62,6 +70,7 @@
         </section>
     </main>
 
+    <!-- Modal de detalle rápido de producto -->
     <div id="producto-modal" class="producto-modal">
         <div class="producto-modal-backdrop" onclick="closeProductoModal()"></div>
         <div class="producto-modal-content">
@@ -78,10 +87,12 @@
         </div>
     </div>
 
+    <!-- Pié de página -->
     <footer id="contacto">
         <p>&copy; 2026 Muebleria</p>
     </footer>
 
+    <!-- Scripts: Supabase CDN, configuración, auth, API y página actual -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase.js"></script>
     <script src="js/auth.js"></script>
