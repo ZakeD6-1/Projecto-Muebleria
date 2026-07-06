@@ -1,6 +1,8 @@
+// Productos destacados para el carrusel y últimos 3 productos
 let destacados = [];
 let nuevos = [];
 
+// Carga todos los productos desde Supabase y separa destacados
 async function cargarIndex() {
     try {
         var todos = await supaGetProductos();
@@ -13,12 +15,14 @@ async function cargarIndex() {
     renderNuevos();
 }
 
+// Carrusel infinito con arrastre y auto-play
 function renderCarousel() {
     const track = document.getElementById("carousel-track");
     if (destacados.length === 0) {
         track.innerHTML = '<p class="mensaje-vacio">No hay productos destacados.</p>';
         return;
     }
+    // Duplica items para efecto infinito
     var items = [...destacados, ...destacados];
     track.innerHTML = items.map(function (p, i) {
         return '<article class="producto-card carousel-item">' +
@@ -40,6 +44,7 @@ function renderCarousel() {
         if (track.scrollLeft <= 0) { track.scrollLeft += halfWidth(); }
     }
 
+    // Auto-desplazamiento continuo
     function autoScroll() {
         if (!initialized) { track.scrollLeft = halfWidth(); initialized = true; }
         if (!isDragging && !isPaused) { track.scrollLeft += 0.5; wrapScroll(); }
@@ -47,6 +52,7 @@ function renderCarousel() {
     }
     autoScroll();
 
+    // Pausa al hacer hover o al arrastrar
     track.addEventListener("mouseenter", function () { isPaused = true; });
     track.addEventListener("mouseleave", function () {
         isPaused = false;
@@ -67,6 +73,7 @@ function renderCarousel() {
     });
     track.addEventListener("mouseup", function () { isDragging = false; track.style.cursor = ""; wrapScroll(); });
 
+    // Botones de navegación lateral
     function scrollByCard(dir) {
         isPaused = true; track.scrollLeft += dir * (320 + 24); wrapScroll();
         clearTimeout(scrollTimeout); scrollTimeout = setTimeout(function () { isPaused = false; }, 3000);
@@ -74,6 +81,7 @@ function renderCarousel() {
     document.getElementById("arrow-left").addEventListener("click", function () { scrollByCard(-1); });
     document.getElementById("arrow-right").addEventListener("click", function () { scrollByCard(1); });
 
+    // Abre modal al hacer clic en "Ver"
     track.addEventListener("click", function (e) {
         var btn = e.target.closest(".btn-ver");
         if (btn) {
@@ -83,6 +91,7 @@ function renderCarousel() {
     });
 }
 
+// Grilla con los últimos 3 productos agregados
 function renderNuevos() {
     var grid = document.getElementById("nuevos-grid");
     if (nuevos.length === 0) {
@@ -105,6 +114,7 @@ document.addEventListener("DOMContentLoaded", function () {
     cargarIndex();
 });
 
+// Modal de detalle de producto
 function abrirModal(p) {
     var modal = document.getElementById("producto-modal");
     document.getElementById("modal-img").src = p.imagen;

@@ -1,5 +1,7 @@
+// Página de pago: carga el resumen del carrito y el formulario de pago
 async function cargarCheckout() {
     var container = document.getElementById("checkout-contenido");
+    // Si no hay sesión, pide iniciar sesión
     if (!isLoggedIn()) {
         container.innerHTML =
             '<div class="checkout-vacio">' +
@@ -24,6 +26,7 @@ async function cargarCheckout() {
     }
 }
 
+// Muestra el resumen del pedido y el formulario con datos de pago y envío
 function renderCheckout(container, items) {
     var total = 0;
     var html = '<div class="checkout-section">' +
@@ -111,6 +114,7 @@ function renderCheckout(container, items) {
     container.innerHTML = html;
 }
 
+// Procesa el pago: limpia el carrito y redirige al inicio
 async function procesarPago(e) {
     e.preventDefault();
     var btn = document.getElementById("checkout-submit");

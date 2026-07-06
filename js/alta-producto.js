@@ -1,3 +1,6 @@
+// --- Categorías ---
+
+// Carga el select de categorías desde Supabase
 async function cargarCategorias() {
     var select = document.getElementById("categoria");
     var editId = new URLSearchParams(window.location.search).get("edit");
@@ -10,6 +13,7 @@ async function cargarCategorias() {
             opt.textContent = c.nombre;
             select.appendChild(opt);
         });
+        // Si estamos editando, selecciona la categoría del producto
         if (editId) {
             var p = await supaGetProducto(editId);
             select.value = p.categoria;
@@ -19,7 +23,9 @@ async function cargarCategorias() {
     }
 }
 
+// Inicializa el formulario de alta/edición de producto
 function initAltaProducto() {
+    // Solo administradores pueden acceder
     if (!isAdmin()) {
         window.location.href = "index.html";
         return;
@@ -30,26 +36,30 @@ function initAltaProducto() {
     var params = new URLSearchParams(window.location.search);
     var editId = params.get("edit");
 
+    // Si hay parámetro "edit", precarga los datos del producto
     if (editId) {
         document.querySelector("h1").textContent = "Editar Producto";
         cargarProductoParaEditar(editId);
     }
 
+    // Muestra el input para agregar una categoría nueva
     document.getElementById("btn-nueva-categoria").addEventListener("click", function () {
         document.getElementById("nueva-categoria-input").style.display = "block";
         document.getElementById("input-nueva-categoria").focus();
     });
 
+    // Oculta el input de nueva categoría sin guardar
     document.getElementById("btn-cancelar-categoria").addEventListener("click", function () {
         document.getElementById("nueva-categoria-input").style.display = "none";
         document.getElementById("input-nueva-categoria").value = "";
     });
 
+    // Agrega la nueva categoría al select
     document.getElementById("btn-confirmar-categoria").addEventListener("click", function () {
         var input = document.getElementById("input-nueva-categoria");
         var nombre = input.value.trim();
         if (!nombre) return;
-        var id = nombre.toLowerCase().replace(/\s+/g, "-");
+        var id = nombre;
         var select = document.getElementById("categoria");
         var opt = document.createElement("option");
         opt.value = id;
@@ -60,6 +70,7 @@ function initAltaProducto() {
         document.getElementById("nueva-categoria-input").style.display = "none";
     });
 
+    // Guarda o actualiza el producto al enviar el formulario
     document.getElementById("producto-form").addEventListener("submit", async function (e) {
         e.preventDefault();
         var data = {
@@ -92,6 +103,7 @@ function initAltaProducto() {
     });
 }
 
+// Precarga los datos de un producto en el formulario para editar
 async function cargarProductoParaEditar(id) {
     try {
         var p = await supaGetProducto(id);
@@ -115,47 +127,38 @@ async function cargarProductoParaEditar(id) {
     }
 }
 
+// --- Listado de productos ---
+
+// Renderiza la tabla con todos los productos existentes
 async function cargarProductosLista() {
-    var container = document.getElementById("productos-lista");
+    var tbody = document.getElementById("productos-tbody");
     try {
         var productos = await supaGetProductos();
+        tbody.innerHTML = "";
         if (productos.length === 0) {
-            container.innerHTML = "<p>No hay productos.</p>";
+            tbody.innerHTML = "<tr><td colspan='7' style='text-align:center;padding:2rem;color:#999;'>No hay productos.</td></tr>";
             return;
         }
-        var html = "<table style='width:100%;border-collapse:collapse;'>" +
-            "<thead><tr style='text-align:left;background:#f5f5f5;'>" +
-            "<th style='padding:8px;'>Imagen</th>" +
-            "<th style='padding:8px;'>Nombre</th>" +
-            "<th style='padding:8px;'>Categoría</th>" +
-            "<th style='padding:8px;'>Precio</th>" +
-            "<th style='padding:8px;'>Dto.</th>" +
-            "<th style='padding:8px;'>Stock</th>" +
-            "<th style='padding:8px;'></th>" +
-            "</tr></thead><tbody>";
         productos.forEach(function (p) {
             var img = p.imagen || "";
-            html += "<tr style='border-bottom:1px solid #ddd;'>" +
-                "<td style='padding:8px;'>" +
-                    (img ? "<img src='" + img + "' alt='" + p.nombre + "' style='width:60px;height:60px;object-fit:cover;border-radius:6px;display:block;'>" : "") +
-                "</td>" +
-                "<td style='padding:8px;'>" + p.nombre + "</td>" +
-                "<td style='padding:8px;'>" + p.categoria.split('-').map(function (w) { return w.charAt(0).toUpperCase() + w.slice(1); }).join(' ') + "</td>" +
-                "<td style='padding:8px;'>" + formatPrecio(p.precio) + "</td>" +
-                "<td style='padding:8px;'>" + (p.descuento > 0 ? p.descuento + "%" : "-") + "</td>" +
-                "<td style='padding:8px;'>" + p.stock + "</td>" +
-                "<td style='padding:8px;'>" +
-                    "<a href='alta-producto.html?edit=" + p.id + "' style='margin-right:8px;color:#4a7c5a;'>Editar</a>" +
-                    "<button onclick='eliminarProducto(" + p.id + ",\"" + p.nombre.replace(/"/g,'&quot;') + "\")' style='background:none;border:none;color:#e74c3c;cursor:pointer;'>Eliminar</button>" +
+            tbody.innerHTML += "<tr>" +
+                "<td>" + (img ? "<img src='" + img + "' alt='" + p.nombre + "' class='thumb'>" : "") + "</td>" +
+                "<td>" + p.nombre + "</td>" +
+                "<td>" + p.categoria + "</td>" +
+                "<td>" + formatPrecio(p.precio) + "</td>" +
+                "<td>" + (p.descuento > 0 ? p.descuento + "%" : "-") + "</td>" +
+                "<td>" + p.stock + "</td>" +
+                "<td>" +
+                    "<a href='alta-producto.html?edit=" + p.id + "' class='btn-editar-link'>Editar</a>" +
+                    "<button onclick='eliminarProducto(" + p.id + ",\"" + p.nombre.replace(/"/g,'&quot;') + "\")' class='btn-eliminar-admin'>Eliminar</button>" +
                 "</td></tr>";
         });
-        html += "</tbody></table>";
-        container.innerHTML = html;
     } catch (err) {
-        container.innerHTML = "<p>Error al cargar productos: " + err.message + "</p>";
+        tbody.innerHTML = "<tr><td colspan='7' style='text-align:center;padding:2rem;color:#e74c3c;'>Error: " + err.message + "</td></tr>";
     }
 }
 
+// Elimina un producto tras confirmación del usuario
 async function eliminarProducto(id, nombre) {
     if (!confirm('¿Eliminar el producto "' + nombre + '"?')) return;
     try {

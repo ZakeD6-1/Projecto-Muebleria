@@ -1,7 +1,11 @@
-﻿function formatPrecio(num) {
+﻿// --- Utilidades de formato ---
+
+// Formatea un número como precio en pesos argentinos
+function formatPrecio(num) {
   return '$' + Number(num).toLocaleString('es-AR');
 }
 
+// Normaliza un producto de Supabase a un objeto limpio
 function mapearProducto(raw) {
   var tags = raw.tags;
   if (typeof tags === 'string') {
@@ -28,6 +32,7 @@ function mapearProducto(raw) {
   };
 }
 
+// Renderiza el precio con descuento (tachado + final + badge)
 function formatPrecioConDesc(p) {
   if (p.descuento > 0) {
     return '<span class="precio-original">' + formatPrecio(p.precioOriginal) + '</span> ' +
@@ -37,6 +42,9 @@ function formatPrecioConDesc(p) {
   return formatPrecio(p.precio);
 }
 
+// --- Productos ---
+
+// Trae todos los productos ordenados por ID descendente
 async function supaGetProductos() {
   const { data, error } = await _supabase
     .from('Productos')
@@ -46,6 +54,7 @@ async function supaGetProductos() {
   return (data || []).map(mapearProducto);
 }
 
+// Trae un producto por su ID
 async function supaGetProducto(id) {
   const { data, error } = await _supabase
     .from('Productos')
@@ -56,6 +65,7 @@ async function supaGetProducto(id) {
   return mapearProducto(data);
 }
 
+// Obtiene la lista de categorías únicas disponibles
 async function supaGetCategorias() {
   const { data, error } = await _supabase
     .from('Productos')
@@ -67,11 +77,11 @@ async function supaGetCategorias() {
     if (r.categoria) mapa[r.categoria] = true;
   });
   return Object.keys(mapa).map(function (id) {
-    var nombre = id.split('-').map(function (w) { return w.charAt(0).toUpperCase() + w.slice(1); }).join(' ');
-    return { id: id, nombre: nombre };
+    return { id: id, nombre: id };
   });
 }
 
+// Crea un nuevo producto en Supabase
 async function supaCreateProducto(obj) {
   const { data, error } = await _supabase
     .from('Productos')
@@ -82,6 +92,7 @@ async function supaCreateProducto(obj) {
   return data;
 }
 
+// Actualiza un producto existente por ID
 async function supaUpdateProducto(id, obj) {
   const { data, error } = await _supabase
     .from('Productos')
@@ -93,6 +104,7 @@ async function supaUpdateProducto(id, obj) {
   return data;
 }
 
+// Elimina un producto por ID
 async function supaDeleteProducto(id) {
   const { error } = await _supabase
     .from('Productos')
@@ -101,6 +113,9 @@ async function supaDeleteProducto(id) {
   if (error) throw error;
 }
 
+// --- Carrito ---
+
+// Obtiene todos los items del carrito de un usuario
 async function supaGetCarrito(usuarioId) {
   const { data, error } = await _supabase
     .from('Carrito')
@@ -111,6 +126,7 @@ async function supaGetCarrito(usuarioId) {
   return data || [];
 }
 
+// Agrega un producto al carrito o suma cantidad si ya existe
 async function supaAddToCart(usuarioId, productoId, cantidad) {
   const { data: existing } = await _supabase
     .from('Carrito')
@@ -133,6 +149,7 @@ async function supaAddToCart(usuarioId, productoId, cantidad) {
   }
 }
 
+// Elimina un item del carrito por ID
 async function supaRemoveFromCart(cartItemId) {
   const { error } = await _supabase
     .from('Carrito')
@@ -141,6 +158,7 @@ async function supaRemoveFromCart(cartItemId) {
   if (error) throw error;
 }
 
+// Actualiza la cantidad de un item (elimina si llega a 0 o menos)
 async function supaUpdateCantidad(cartItemId, cantidad) {
   if (cantidad <= 0) {
     return supaRemoveFromCart(cartItemId);
@@ -152,6 +170,7 @@ async function supaUpdateCantidad(cartItemId, cantidad) {
   if (error) throw error;
 }
 
+// Vacía el carrito completo de un usuario
 async function supaLimpiarCarrito(usuarioId) {
   const { error } = await _supabase
     .from('Carrito')

@@ -8,6 +8,7 @@
 </head>
 <body class="page-layout">
 
+    <!-- Encabezado con navegación principal -->
     <header>
         <h1>Muebleria</h1>
         <nav>
@@ -32,6 +33,7 @@
 
     <h1>Alta de Producto</h1>
 
+    <!-- Formulario de alta/edición de producto -->
     <form id="producto-form">
 
         <div>
@@ -55,6 +57,7 @@
 
         <br>
 
+        <!-- Select de categorías + opción para agregar nueva -->
         <div>
             <label for="categoria">Categoría</label><br>
             <select id="categoria" name="categoria" required>
@@ -106,6 +109,7 @@
 
         <br>
 
+        <!-- Stock: radio buttons para disponible/agotado -->
         <div>
             <label>Stock</label><br>
             <input type="radio" id="stock-si" name="stock" value="En Stock" checked>
@@ -133,8 +137,24 @@
 
     <hr class="separador-productos">
 
+    <!-- Tabla de productos existentes con edición y eliminación -->
     <h2>Productos existentes</h2>
-    <div id="productos-lista"></div>
+    <div id="productos-lista">
+      <table class="tabla-productos">
+        <thead>
+          <tr>
+            <th>Imagen</th>
+            <th>Nombre</th>
+            <th>Categoría</th>
+            <th>Precio</th>
+            <th>Dto.</th>
+            <th>Stock</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="productos-tbody"></tbody>
+      </table>
+    </div>
 
     </main>
 
