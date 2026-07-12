@@ -1,4 +1,5 @@
 ﻿// --- Sesión: lectura de datos del usuario desde sessionStorage ---
+
 function isLoggedIn() {
     return sessionStorage.getItem("userId") !== null;
 }
@@ -21,17 +22,13 @@ function isAdmin() {
 
 // Autentica contra Supabase y guarda sesión en sessionStorage
 async function login(username, password) {
-    const { data, error } = await _supabase
-        .from('Usuarios')
-        .select('*')
-        .eq('email', username)
-        .eq('password', password)
-        .single();
-    if (error || !data) return false;
-    sessionStorage.setItem("userId", data.id);
-    sessionStorage.setItem("userEmail", data.email);
-    sessionStorage.setItem("userNombre", data.nombre);
-    sessionStorage.setItem("userRol", data.rol);
+    var data = await supaFetch('GET', 'Usuarios?select=*&email=eq.' + encodeURIComponent(username) + '&password=eq.' + encodeURIComponent(password) + '&limit=1');
+    if (!data || data.length === 0) return false;
+    var user = data[0];
+    sessionStorage.setItem("userId", user.id);
+    sessionStorage.setItem("userEmail", user.email);
+    sessionStorage.setItem("userNombre", user.nombre);
+    sessionStorage.setItem("userRol", user.rol);
     return true;
 }
 
@@ -96,14 +93,13 @@ async function updateCarritoBadge() {
         badge.style.display = "none";
         return;
     }
-    const { data, error } = await _supabase
-        .from('Carrito')
-        .select('cantidad')
-        .eq('usuario_id', getUserId());
-    if (!error) {
-        const total = data?.reduce((sum, item) => sum + item.cantidad, 0) || 0;
+    try {
+        var data = await supaFetch('GET', 'Carrito?select=cantidad&usuario_id=eq.' + getUserId());
+        const total = (data || []).reduce(function (sum, item) { return sum + item.cantidad; }, 0) || 0;
         badge.textContent = total;
         badge.style.display = total > 0 ? "flex" : "none";
+    } catch (_) {
+        // Error al obtener badge del carrito — se mantiene el valor actual
     }
 }
 
