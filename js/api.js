@@ -46,32 +46,20 @@ function formatPrecioConDesc(p) {
 
 // Trae todos los productos ordenados por ID descendente
 async function supaGetProductos() {
-  const { data, error } = await _supabase
-    .from('Productos')
-    .select('*')
-    .order('id', { ascending: false });
-  if (error) throw error;
+  var data = await supaFetch('GET', 'Productos?select=*&order=id.desc');
   return (data || []).map(mapearProducto);
 }
 
 // Trae un producto por su ID
 async function supaGetProducto(id) {
-  const { data, error } = await _supabase
-    .from('Productos')
-    .select('*')
-    .eq('id', id)
-    .single();
-  if (error) throw error;
-  return mapearProducto(data);
+  var data = await supaFetch('GET', 'Productos?select=*&id=eq.' + id + '&limit=1');
+  if (!data || data.length === 0) throw new Error('Producto no encontrado');
+  return mapearProducto(data[0]);
 }
 
 // Obtiene la lista de categorías únicas disponibles
 async function supaGetCategorias() {
-  const { data, error } = await _supabase
-    .from('Productos')
-    .select('categoria')
-    .order('categoria', { ascending: true });
-  if (error) throw error;
+  var data = await supaFetch('GET', 'Productos?select=categoria&order=categoria.asc');
   var mapa = {};
   (data || []).forEach(function (r) {
     if (r.categoria) mapa[r.categoria] = true;
@@ -83,79 +71,53 @@ async function supaGetCategorias() {
 
 // Crea un nuevo producto en Supabase
 async function supaCreateProducto(obj) {
-  const { data, error } = await _supabase
-    .from('Productos')
-    .insert(obj)
-    .select()
-    .single();
-  if (error) throw error;
-  return data;
+  var data = await supaFetch('POST', 'Productos', {
+    body: obj,
+    prefer: 'return=representation',
+  });
+  return (data || [])[0] || data;
 }
 
 // Actualiza un producto existente por ID
 async function supaUpdateProducto(id, obj) {
-  const { data, error } = await _supabase
-    .from('Productos')
-    .update(obj)
-    .eq('id', id)
-    .select()
-    .single();
-  if (error) throw error;
-  return data;
+  var data = await supaFetch('PATCH', 'Productos?id=eq.' + id, {
+    body: obj,
+    prefer: 'return=representation',
+  });
+  return (data || [])[0] || data;
 }
 
 // Elimina un producto por ID
 async function supaDeleteProducto(id) {
-  const { error } = await _supabase
-    .from('Productos')
-    .delete()
-    .eq('id', id);
-  if (error) throw error;
+  await supaFetch('DELETE', 'Productos?id=eq.' + id);
 }
 
 // --- Carrito ---
 
 // Obtiene todos los items del carrito de un usuario
 async function supaGetCarrito(usuarioId) {
-  const { data, error } = await _supabase
-    .from('Carrito')
-    .select('*, Productos(*)')
-    .eq('usuario_id', usuarioId)
-    .order('id', { ascending: true });
-  if (error) throw error;
+  var data = await supaFetch('GET', 'Carrito?select=*,Productos(*)&usuario_id=eq.' + usuarioId + '&order=id.asc');
   return data || [];
 }
 
 // Agrega un producto al carrito o suma cantidad si ya existe
 async function supaAddToCart(usuarioId, productoId, cantidad) {
-  const { data: existing } = await _supabase
-    .from('Carrito')
-    .select('*')
-    .eq('usuario_id', usuarioId)
-    .eq('producto_id', productoId)
-    .maybeSingle();
-  if (existing) {
-    const nuevaCant = existing.cantidad + cantidad;
-    const { error } = await _supabase
-      .from('Carrito')
-      .update({ cantidad: nuevaCant })
-      .eq('id', existing.id);
-    if (error) throw error;
+  var existing = await supaFetch('GET', 'Carrito?select=*&usuario_id=eq.' + usuarioId + '&producto_id=eq.' + productoId + '&limit=1');
+  if (existing && existing.length > 0) {
+    var nuevaCant = existing[0].cantidad + cantidad;
+    await supaFetch('PATCH', 'Carrito?id=eq.' + existing[0].id, {
+      body: { cantidad: nuevaCant },
+    });
   } else {
-    const { error } = await _supabase
-      .from('Carrito')
-      .insert({ usuario_id: usuarioId, producto_id: productoId, cantidad });
-    if (error) throw error;
+    await supaFetch('POST', 'Carrito', {
+      body: { usuario_id: usuarioId, producto_id: productoId, cantidad: cantidad },
+    });
   }
 }
 
 // Elimina un item del carrito por ID
 async function supaRemoveFromCart(cartItemId) {
-  const { error } = await _supabase
-    .from('Carrito')
-    .delete()
-    .eq('id', cartItemId);
-  if (error) throw error;
+  await supaFetch('DELETE', 'Carrito?id=eq.' + cartItemId);
 }
 
 // Actualiza la cantidad de un item (elimina si llega a 0 o menos)
@@ -163,18 +125,12 @@ async function supaUpdateCantidad(cartItemId, cantidad) {
   if (cantidad <= 0) {
     return supaRemoveFromCart(cartItemId);
   }
-  const { error } = await _supabase
-    .from('Carrito')
-    .update({ cantidad })
-    .eq('id', cartItemId);
-  if (error) throw error;
+  await supaFetch('PATCH', 'Carrito?id=eq.' + cartItemId, {
+    body: { cantidad: cantidad },
+  });
 }
 
 // Vacía el carrito completo de un usuario
 async function supaLimpiarCarrito(usuarioId) {
-  const { error } = await _supabase
-    .from('Carrito')
-    .delete()
-    .eq('usuario_id', usuarioId);
-  if (error) throw error;
+  await supaFetch('DELETE', 'Carrito?usuario_id=eq.' + usuarioId);
 }

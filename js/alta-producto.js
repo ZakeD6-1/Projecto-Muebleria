@@ -23,7 +23,7 @@ async function cargarCategorias() {
     }
 }
 
-// Inicializa el formulario de alta/edición de producto
+// Comienza el formulario de alta/edición de producto
 function initAltaProducto() {
     // Solo administradores pueden acceder
     if (!isAdmin()) {
